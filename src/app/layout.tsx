@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Nunito } from 'next/font/google';
 import './globals.css';
+import { ThemeProvider } from '@/providers/theme-provider';
+import Navbar from '@/components/shared/Navbar';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -19,9 +21,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={nunito.className}>
-        <main className="lg:container">{children}</main>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Navbar />
+          <main className="container">{children}</main>
+        </ThemeProvider>
       </body>
     </html>
   );
