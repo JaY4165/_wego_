@@ -9,7 +9,7 @@ function LogIn() {
         <div className="pb-8 text-center">
           <h1 className="text-4xl pl-5 font-semibold">Welcome Back ✨</h1>
           <p className="pt-2 text-sm font-light">
-            Enter your email and password to access your account
+            Enter your email and password to access your account.
           </p>
         </div>
         <LoginForm />
