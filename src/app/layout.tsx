@@ -3,6 +3,7 @@ import { Nunito } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/providers/theme-provider';
 import Navbar from '@/components/shared/Navbar';
+import ReactQueryClientProvider from '@/providers/ReactQueryClientProvider';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -23,15 +24,17 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={nunito.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <Navbar />
-          <main className="container">{children}</main>
-        </ThemeProvider>
+        <ReactQueryClientProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Navbar />
+            <main className="container">{children}</main>
+          </ThemeProvider>
+        </ReactQueryClientProvider>
       </body>
     </html>
   );
