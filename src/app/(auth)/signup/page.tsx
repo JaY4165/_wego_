@@ -14,10 +14,10 @@ function SignUp() {
         </div>
         <SignUpForm />
       </div>
-      <div className="overflow-hidden flex items-center justify-center">
+      <div className="overflow-hidden flex items-center justify-center rounded-2xl">
         <Image
           src="/images/OIG.jpeg"
-          className="object-contain rounded-2xl backdrop-blur-lg blur-lg hidden md:block"
+          className="object-contain rounded-2xl backdrop-blur-lg  hidden md:block"
           width={600}
           height={400}
           loading="lazy"

@@ -16,49 +16,21 @@ import {
 import { Input } from '@/components/ui/input';
 import { Checkbox } from './ui/checkbox';
 import { useEffect, useRef, useState } from 'react';
-
-const formSchema = z.object({
-  email: z
-    .string()
-    .min(2, {
-      message: 'Email must be at least 2 characters.',
-    })
-    .max(70, {
-      message: 'Email must be at most 70 characters.',
-    })
-    .email({
-      message: 'Invalid email format.',
-    }),
-  password: z
-    .string()
-    .min(8, { message: 'Password must be at least 8 characters.' })
-    .max(70, { message: 'Password must be at most 70 characters.' })
-    .refine(
-      (value) => {
-        return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/.test(
-          value,
-        );
-      },
-      {
-        message:
-          'Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character.',
-      },
-    ),
-});
+import { loginFormSchema } from '@/utils/validations';
 
 export default function LoginForm() {
   const passwordRef = useRef<HTMLInputElement>(null);
   const [showPwd, setShowPwd] = useState(false);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof loginFormSchema>>({
+    resolver: zodResolver(loginFormSchema),
     defaultValues: {
       email: '',
       password: '',
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof loginFormSchema>) {
     console.log(values);
   }
 
