@@ -1,6 +1,6 @@
 import { loginFormSchema } from '@/utils/validations';
 import { type NextRequest } from 'next/server';
-import z from 'zod';
+import z, { any } from 'zod';
 import { hashPassword } from '@/utils/bcryptHash';
 import { createClient } from '@/utils/supabase/supaBaseServer';
 import { cookies } from 'next/headers';
@@ -13,18 +13,11 @@ export async function POST(req: NextRequest) {
     const parsedBody = loginFormSchema.safeParse(body);
     if (!parsedBody.success) {
       return new Response(JSON.stringify(parsedBody.error), {
-        status: 500,
+        status: 400,
       });
     }
     const { email, password } = parsedBody.data;
 
-    const userAlreadyPresent = await supabase.auth.getUser(email);
-
-    if (userAlreadyPresent) {
-      return new Response(JSON.stringify({ error: 'User already exists' }), {
-        status: 400,
-      });
-    }
 
     const hashedPassword = await hashPassword(password);
 

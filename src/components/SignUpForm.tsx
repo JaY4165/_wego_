@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import { z } from 'zod';
 import { Loader } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+
 import {
   Form,
   FormControl,
@@ -17,8 +18,12 @@ import {
 import { Input } from '@/components/ui/input';
 import { Checkbox } from './ui/checkbox';
 import { signupFormSchema } from '@/utils/validations';
+import { useMutation } from '@tanstack/react-query';
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 export default function SignUpForm() {
+  const router = useRouter();
   const passwordRef1 = useRef<HTMLInputElement>(null);
   const passwordRef2 = useRef<HTMLInputElement>(null);
   const [showPwd, setShowPwd] = useState(false);
@@ -32,8 +37,36 @@ export default function SignUpForm() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof signupFormSchema>) {
-    console.log(values);
+  const registerUser: any = async (data: z.infer<typeof signupFormSchema>) => {
+    const response = await axios.post('/api/register', {
+      email: data.email,
+      password: data.password,
+    });
+    if (!response?.data) console.log('Server error');
+    if (response.status === 400) console.log('User Already Exists');
+    if (response.status === 500) console.log('Server error');
+    console.log(response.data);
+    return response.data;
+  };
+
+  const mutation = useMutation({
+    mutationFn: registerUser,
+    onError(error) {
+      console.log(error);
+    },
+    onSuccess(data) {
+      return data;
+    },
+  });
+
+  async function onSubmit(values: z.infer<typeof signupFormSchema | any>) {
+    try {
+      const submittedData = await mutation.mutateAsync(values);
+      console.log(submittedData, 'submittedData');
+      if ((submittedData as { session?: any })?.session) router.push('/login');
+    } catch (error: any) {
+      console.error(error);
+    }
   }
 
   const isLoading = false;
