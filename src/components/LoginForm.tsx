@@ -15,12 +15,18 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from './ui/checkbox';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useTransition } from 'react';
 import { loginFormSchema } from '@/utils/validations';
+import { signInWithEmailAndPassword } from '@/app/actions/auth-actions';
+import { useMutation } from '@tanstack/react-query';
+import { toast } from '@/components/ui/use-toast';
+import { useRouter } from 'next/navigation';
 
 export default function LoginForm() {
   const passwordRef = useRef<HTMLInputElement>(null);
   const [showPwd, setShowPwd] = useState(false);
+  let [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
@@ -30,11 +36,47 @@ export default function LoginForm() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof loginFormSchema>) {
-    console.log(values);
-  }
+  const loginUser: any = async (data: z.infer<typeof loginFormSchema>) => {
+    const res = await signInWithEmailAndPassword(data);
+    return JSON.parse(res);
+  };
 
-  const isLoading = false;
+  const mutation = useMutation({
+    mutationFn: loginUser,
+    onError(error) {
+      console.log(error);
+    },
+    onSuccess(data) {
+      return data;
+    },
+  });
+
+  async function onSubmit(data: z.infer<typeof loginFormSchema | any>) {
+    try {
+      startTransition(async () => {
+        const result: any = (await mutation.mutateAsync(data)) as any;
+
+        if (result?.error) {
+          toast({
+            title: 'Error',
+            description: result.error.message,
+            duration: 5000,
+            variant: 'destructive',
+          });
+        } else {
+          toast({
+            title: 'Logged In Successfully',
+            description: 'You have been logged in successfully',
+            duration: 5000,
+          });
+          router.push('/');
+        }
+        form.reset();
+      });
+    } catch (error: any) {
+      console.error(error);
+    }
+  }
 
   useEffect(() => {
     if (showPwd === true) {
@@ -100,10 +142,10 @@ export default function LoginForm() {
             </label>
           </div>
           <Button type="submit" className="w-full rounded-md">
-            {isLoading ? (
+            {isPending ? (
               <Loader className="mr-2 h-4 w-4 animate-spin" />
             ) : null}
-            {isLoading ? 'Signing In' : 'Sign In'}
+            {isPending ? 'Signing In' : 'Sign In'}
           </Button>
         </form>
       </Form>
@@ -114,9 +156,9 @@ export default function LoginForm() {
         variant="outline"
         className="w-full"
         type="button"
-        disabled={isLoading}
+        disabled={isPending}
       >
-        {isLoading ? (
+        {isPending ? (
           <Loader className="mr-2 h-4 w-4 animate-spin" />
         ) : (
           <svg

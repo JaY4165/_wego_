@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useTransition } from 'react';
 import { z } from 'zod';
 import { Loader } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -19,14 +19,16 @@ import { Input } from '@/components/ui/input';
 import { Checkbox } from './ui/checkbox';
 import { signupFormSchema } from '@/utils/validations';
 import { useMutation } from '@tanstack/react-query';
-import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import { signUpWithEmailAndPassword } from '@/app/actions/auth-actions';
+import { toast } from '@/components/ui/use-toast';
 
 export default function SignUpForm() {
   const router = useRouter();
   const passwordRef1 = useRef<HTMLInputElement>(null);
   const passwordRef2 = useRef<HTMLInputElement>(null);
   const [showPwd, setShowPwd] = useState(false);
+  let [isPending, startTransition] = useTransition();
 
   const form = useForm<z.infer<typeof signupFormSchema>>({
     resolver: zodResolver(signupFormSchema),
@@ -38,15 +40,8 @@ export default function SignUpForm() {
   });
 
   const registerUser: any = async (data: z.infer<typeof signupFormSchema>) => {
-    const response = await axios.post('/api/register', {
-      email: data.email,
-      password: data.password,
-    });
-    if (!response?.data) console.log('Server error');
-    if (response.status === 400) console.log('User Already Exists');
-    if (response.status === 500) console.log('Server error');
-    // console.log(response.data);
-    return response.data;
+    const res = await signUpWithEmailAndPassword(data);
+    return JSON.parse(res);
   };
 
   const mutation = useMutation({
@@ -59,17 +54,32 @@ export default function SignUpForm() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof signupFormSchema | any>) {
+  async function onSubmit(data: z.infer<typeof signupFormSchema | any>) {
     try {
-      const submittedData = await mutation.mutateAsync(values);
-      // console.log(submittedData, 'submittedData');
-      if ((submittedData as { session?: any })?.session) router.push('/');
+      startTransition(async () => {
+        const result: any = (await mutation.mutateAsync(data)) as any;
+
+        if (result?.error) {
+          toast({
+            title: 'Error',
+            description: result.error.message,
+            duration: 5000,
+            variant: 'destructive',
+          });
+        } else {
+          toast({
+            title: 'Account Created',
+            description: 'Your account has been created successfully.',
+            duration: 5000,
+          });
+          router.refresh();
+        }
+        form.reset();
+      });
     } catch (error: any) {
       console.error(error);
     }
   }
-
-  const isLoading = false;
 
   useEffect(() => {
     if (showPwd === true) {
@@ -159,10 +169,10 @@ export default function SignUpForm() {
             </label>
           </div>
           <Button type="submit" className="w-full rounded-md">
-            {isLoading ? (
+            {isPending ? (
               <Loader className="mr-2 h-4 w-4 animate-spin" />
             ) : null}
-            {isLoading ? 'Signing Up' : 'Sign Up'}
+            {isPending ? 'Signing Up' : 'Sign Up'}
           </Button>
         </form>
       </Form>
@@ -173,9 +183,9 @@ export default function SignUpForm() {
         variant="outline"
         className="w-full"
         type="button"
-        disabled={isLoading}
+        disabled={isPending}
       >
-        {isLoading ? (
+        {isPending ? (
           <Loader className="mr-2 h-4 w-4 animate-spin" />
         ) : (
           <svg

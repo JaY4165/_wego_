@@ -4,6 +4,7 @@ import './globals.css';
 import { ThemeProvider } from '@/providers/theme-provider';
 import Navbar from '@/components/shared/Navbar';
 import ReactQueryClientProvider from '@/providers/ReactQueryClientProvider';
+import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -33,6 +34,7 @@ export default function RootLayout({
           >
             <Navbar />
             <main className="container">{children}</main>
+            <Toaster />
           </ThemeProvider>
         </ReactQueryClientProvider>
       </body>

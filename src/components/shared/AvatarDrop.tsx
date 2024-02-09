@@ -9,14 +9,23 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { createClient } from '@/utils/supabase/supaBaseClient';
+import { signOut } from '@/app/actions/auth-actions';
+import { toast } from '@/components/ui/use-toast';
 
-const AvatarDrop = () => {
-  const supabase = createClient();
+const AvatarDrop = ({ user }: any) => {
+  const userName = user?.user?.email.split('@')[0];
 
-  const user = supabase.auth.getUser();
-
-  console.log(user);
+  const handleSignOut = async () => {
+    const err = await signOut();
+    if (err !== null) {
+      toast({
+        title: 'Error',
+        description: JSON.parse(err),
+        duration: 5000,
+        variant: 'destructive',
+      });
+    }
+  };
 
   return (
     <DropdownMenu>
@@ -28,10 +37,12 @@ const AvatarDrop = () => {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end">
-        <DropdownMenuItem>Logged in as </DropdownMenuItem>
+        <DropdownMenuItem>Logged in as {userName || 'user'}</DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem>Reset Password</DropdownMenuItem>
-        <DropdownMenuItem>Sign Out</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleSignOut()}>
+          Sign Out
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

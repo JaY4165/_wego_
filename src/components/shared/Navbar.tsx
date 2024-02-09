@@ -1,21 +1,33 @@
 import React from 'react';
 import { ModeToggle } from './ModeToggle';
 import AvatarDrop from './AvatarDrop';
+import readUser from '@/utils/supabase/readUser';
+import Link from 'next/link';
+import { Button } from '../ui/button';
 
-function Navbar() {
+async function Navbar() {
+  const { user } = await readUser();
   return (
-    <nav className="container flex w-full justify-between items-center pt-4">
-      <div>
-        <h1 className="text-xl">WeGo</h1>
-      </div>
-      <div className="flex gap-x-5">
-        <ModeToggle />
-
-        <div className="cursor-pointer">
-          <AvatarDrop />
+    <header className="container z-50">
+      <nav className="flex w-full justify-between items-center pt-4 z-50">
+        <div>
+          <h1 className="text-xl">WeGo</h1>
         </div>
-      </div>
-    </nav>
+        <div className="flex gap-x-5">
+          <ModeToggle />
+
+          {user?.data?.user?.email ? (
+            <div className="cursor-pointer">
+              <AvatarDrop user={user.data} />
+            </div>
+          ) : (
+            <Button asChild className="cursor-pointer">
+              <Link href="/login">Login</Link>
+            </Button>
+          )}
+        </div>
+      </nav>
+    </header>
   );
 }
 

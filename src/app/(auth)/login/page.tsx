@@ -1,8 +1,9 @@
 import React from 'react';
 import Image from 'next/image';
 import LoginForm from '@/components/LoginForm';
+import readUser from '@/utils/supabase/readUser';
 
-function LogIn() {
+async function LogIn() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 grid-rows-1 w-full py-10">
       <div className="w-full md:px-20 flex flex-col justify-center order-1">
