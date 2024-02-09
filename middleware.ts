@@ -1,20 +1,22 @@
-import { NextResponse, type NextRequest } from 'next/server';
-import { createClient } from '@/utils/supabase/supaMiddleware';
+import { type NextRequest, NextResponse } from 'next/server';
+import { updateSession, createClient } from '@/utils/supabase/supaMiddleware';
 
 export async function middleware(request: NextRequest) {
-  try {
-    const { supabase, response } = createClient(request);
-    await supabase.auth.getUser();
-    return response;
-  } catch (e: any) {
-    return NextResponse.next({
-      request: {
-        headers: request.headers,
-      },
-    });
+
+  const { supabase } = createClient(request);
+  const user = await supabase.auth.getUser()
+
+  console.log("middleware running")
+
+
+  if ((request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/signup') && user) {
+    return NextResponse.redirect('/');
   }
+
+
+  return await updateSession(request);
 }
 
 export const config = {
-  matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
+  matcher: ['/login', '/signup', '/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)', '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'],
 };

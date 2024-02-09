@@ -3,12 +3,10 @@ import { type NextRequest } from 'next/server';
 import z, { any } from 'zod';
 import { hashPassword } from '@/utils/bcryptHash';
 import { createClient } from '@/utils/supabase/supaBaseServer';
-import { cookies } from 'next/headers';
 
 export async function POST(req: NextRequest) {
   try {
-    const cookieStore = cookies();
-    const supabase = createClient(cookieStore);
+    const supabase = createClient();
     const body: z.infer<typeof loginFormSchema> = await req.json();
     const parsedBody = loginFormSchema.safeParse(body);
     if (!parsedBody.success) {
@@ -17,7 +15,6 @@ export async function POST(req: NextRequest) {
       });
     }
     const { email, password } = parsedBody.data;
-
 
     const hashedPassword = await hashPassword(password);
 

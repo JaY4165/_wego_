@@ -58,3 +58,19 @@ export const createClient = (request: NextRequest) => {
 
   return { supabase, response };
 };
+
+
+export const updateSession = async (request: NextRequest) => {
+  try {
+    const { supabase, response } = createClient(request);
+    await supabase.auth.getUser();
+    return response;
+  } catch (e) {
+
+    return NextResponse.next({
+      request: {
+        headers: request.headers,
+      },
+    });
+  }
+};

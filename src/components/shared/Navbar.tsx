@@ -1,5 +1,6 @@
 import React from 'react';
 import { ModeToggle } from './ModeToggle';
+import AvatarDrop from './AvatarDrop';
 
 function Navbar() {
   return (
@@ -7,8 +8,12 @@ function Navbar() {
       <div>
         <h1 className="text-xl">WeGo</h1>
       </div>
-      <div>
+      <div className="flex gap-x-5">
         <ModeToggle />
+
+        <div className="cursor-pointer">
+          <AvatarDrop />
+        </div>
       </div>
     </nav>
   );

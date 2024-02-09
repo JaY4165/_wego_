@@ -45,7 +45,7 @@ export default function SignUpForm() {
     if (!response?.data) console.log('Server error');
     if (response.status === 400) console.log('User Already Exists');
     if (response.status === 500) console.log('Server error');
-    console.log(response.data);
+    // console.log(response.data);
     return response.data;
   };
 
@@ -62,8 +62,8 @@ export default function SignUpForm() {
   async function onSubmit(values: z.infer<typeof signupFormSchema | any>) {
     try {
       const submittedData = await mutation.mutateAsync(values);
-      console.log(submittedData, 'submittedData');
-      if ((submittedData as { session?: any })?.session) router.push('/login');
+      // console.log(submittedData, 'submittedData');
+      if ((submittedData as { session?: any })?.session) router.push('/');
     } catch (error: any) {
       console.error(error);
     }
