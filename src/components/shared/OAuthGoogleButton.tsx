@@ -27,7 +27,7 @@ function OAuthGoogleButton(props: OAuthGoogleButtonProps) {
             access_type: 'offline',
             prompt: 'consent',
           },
-          redirectTo: getURL() + 'auth/callback',
+          redirectTo: getURL(),
         },
       });
       router.refresh();
