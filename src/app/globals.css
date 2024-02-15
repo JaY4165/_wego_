@@ -18,8 +18,6 @@
   animation-iteration-count: infinite;
 }
 
-
-
 @keyframes gradient-change {
   0% {
     background-position: 0 0;

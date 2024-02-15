@@ -3,6 +3,8 @@ import { NextResponse } from 'next/server'
 
 import type { NextRequest } from 'next/server'
 
+
+
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
@@ -12,6 +14,12 @@ export async function GET(request: NextRequest) {
     await supabase.auth.exchangeCodeForSession(code)
   }
 
-  // URL to redirect to after sign in process completes
-  return NextResponse.redirect(requestUrl.origin)
+  const supabase = createSupabaseServerClient()
+  const user = await supabase.auth.getUser()
+
+  // if (!user) {
+  //   return NextResponse.redirect(requestUrl.origin + "/404")
+  // }
+
+  return NextResponse.redirect(requestUrl.origin + "/trip-planner")
 }
