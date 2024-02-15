@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
 
       if (error) {
 
-        return NextResponse.redirect(`/error-page?error=${error}$status=500`, 500);
+        return NextResponse.redirect(`/error?error=${error}$status=500`, 500);
       }
       return NextResponse.redirect('/trip-planner');
     } else {
