@@ -5,6 +5,7 @@ import { Button } from '../ui/button';
 import { Loader } from 'lucide-react';
 import { createClient } from '@/utils/supabase/supaBaseClient';
 import { useRouter } from 'next/navigation';
+import { getURL } from '@/utils/getURL';
 
 type OAuthGoogleButtonProps = {
   isPending: boolean;
@@ -26,7 +27,7 @@ function OAuthGoogleButton(props: OAuthGoogleButtonProps) {
             access_type: 'offline',
             prompt: 'consent',
           },
-          redirectTo: process.env.NEXT_PUBLIC_OAUTH_REDIRECT_URL,
+          redirectTo: getURL() + '/auth/callback',
         },
       });
       console.log('res', res);
