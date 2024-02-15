@@ -1,3 +1,4 @@
+import { getURL } from '@/utils/getURL';
 import { createSupabaseServerClient } from '@/utils/supabase/supaBaseServer';
 import { NextResponse } from 'next/server'
 
@@ -12,8 +13,6 @@ export async function GET(request: NextRequest) {
     await supabase.auth.exchangeCodeForSession(code)
   }
 
-  console.log('requestUrl.origin', requestUrl.origin)
-
   // URL to redirect to after sign in process completes
-  return NextResponse.redirect(requestUrl.origin)
+  return NextResponse.redirect(getURL() + `/trip-planner?code?${code}`);
 }
