@@ -11,14 +11,15 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { signOut } from '@/app/actions/auth-actions';
 import { toast } from '@/components/ui/use-toast';
+import { useRouter } from 'next/navigation';
 
 const AvatarDrop = ({ user }: any) => {
+  const router = useRouter();
   const userName = user?.user?.email.split('@')[0];
 
   const handleSignOut = async () => {
     try {
       const err: any = await signOut();
-      console.log('err', err);
       if (err !== 'null') {
         toast({
           title: 'Error',
@@ -26,6 +27,8 @@ const AvatarDrop = ({ user }: any) => {
           duration: 5000,
           variant: 'destructive',
         });
+      } else {
+        router.push('/');
       }
     } catch (error) {
       console.error('error', error);

@@ -2,7 +2,8 @@
 
 import { createSupabaseServerClient } from '@/utils/supabase/supaBaseServer';
 import { signupFormSchema } from '@/utils/validations';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
+import { redirect } from 'next/navigation';
 import z from 'zod';
 
 export async function signUpWithEmailAndPassword(
@@ -33,7 +34,6 @@ export async function signInWithEmailAndPassword(data: {
 export async function signOut() {
     const supabase = createSupabaseServerClient();
     const { error } = await supabase.auth.signOut();
-    revalidatePath("/", "layout")
     return JSON.stringify(error);
 }
 

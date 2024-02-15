@@ -19,6 +19,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/', request.url));
   }
 
+  if (request.nextUrl.pathname === '/trip-planner' && loggedIn === false) {
+    return NextResponse.redirect(new URL('/', request.url));
+  }
+
+
+
   return response;
 }
 
@@ -26,6 +32,7 @@ export const config = {
   matcher: [
     '/login',
     '/signup',
+    '/trip-planner',
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };

@@ -4,7 +4,7 @@ import React from 'react';
 import { Button } from '../ui/button';
 import { Loader } from 'lucide-react';
 import { createClient } from '@/utils/supabase/supaBaseClient';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import { getURL } from '@/utils/getURL';
 
 type OAuthGoogleButtonProps = {
@@ -30,23 +30,21 @@ function OAuthGoogleButton(props: OAuthGoogleButtonProps) {
           redirectTo: getURL() + '/auth/callback',
         },
       });
-      console.log('res', res);
       router.refresh();
     } catch (error) {
       console.error('error', error);
     }
   }
 
-  const isPending = false;
   return (
     <Button
       variant="outline"
       className="w-full"
       type="button"
-      disabled={isPending}
+      disabled={props.isPending}
       onClick={() => loginWithGoogle()}
     >
-      {isPending ? (
+      {props.isPending ? (
         <Loader className="mr-2 h-4 w-4 animate-spin" />
       ) : (
         <svg
