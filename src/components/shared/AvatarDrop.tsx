@@ -16,14 +16,19 @@ const AvatarDrop = ({ user }: any) => {
   const userName = user?.user?.email.split('@')[0];
 
   const handleSignOut = async () => {
-    const err = await signOut();
-    if (err !== null) {
-      toast({
-        title: 'Error',
-        description: JSON.parse(err),
-        duration: 5000,
-        variant: 'destructive',
-      });
+    try {
+      const err: any = await signOut();
+      console.log('err', err);
+      if (err !== 'null') {
+        toast({
+          title: 'Error',
+          description: JSON.parse(err),
+          duration: 5000,
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      console.error('error', error);
     }
   };
 

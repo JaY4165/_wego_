@@ -1,3 +1,37 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.main-gradient {
+  background: linear-gradient(
+    106.89deg,
+    rgba(244, 196, 48, 1) 30%,
+    rgba(80, 200, 120, 1) 43%,
+    rgb(75, 0, 130, 1) 115.91%,
+    rgb(75, 0, 130, 1) 115.91%,
+    rgba(80, 200, 120, 1) 43%,
+    rgba(244, 196, 48, 1) 30%
+  );
+  background-size: 200% 100%;
+  animation: gradient-change 7s ease-in-out infinite forwards;
+  -webkit-animation: gradient-change 7s ease-in-out infinite forwards;
+  animation-iteration-count: infinite;
+}
+
+@keyframes gradient-change {
+  0% {
+    background-position: 0 0;
+  }
+  25% {
+    background-position: 100% 0;
+  }
+  50% {
+    background-position: 0 100%;
+  }
+  75% {
+    background-position: -100% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
