@@ -12,11 +12,11 @@ export async function middleware(request: NextRequest) {
   }
 
   if (request.nextUrl.pathname === '/login' && loggedIn === true) {
-    return NextResponse.rewrite(new URL('/', request.url));
+    return NextResponse.redirect(new URL('/', request.url));
   }
 
   if (request.nextUrl.pathname === '/signup' && loggedIn === true) {
-    return NextResponse.rewrite(new URL('/', request.url));
+    return NextResponse.redirect(new URL('/', request.url));
   }
 
   return response;
