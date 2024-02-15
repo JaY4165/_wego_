@@ -22,6 +22,10 @@ function OAuthGoogleButton(props: OAuthGoogleButtonProps) {
       const res = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
           redirectTo: process.env.NEXT_PUBLIC_OAUTH_REDIRECT_URL,
         },
       });
