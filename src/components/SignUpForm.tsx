@@ -72,7 +72,7 @@ export default function SignUpForm() {
             description: 'Your account has been created successfully.',
             duration: 5000,
           });
-          router.replace('/');
+          router.replace('/trip-planner');
         }
         form.reset();
       });

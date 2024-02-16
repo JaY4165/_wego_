@@ -70,7 +70,7 @@ export default function LoginForm() {
             description: 'You have been logged in successfully',
             duration: 5000,
           });
-          router.replace('/');
+          router.replace('/trip-planner');
         }
         form.reset();
       });

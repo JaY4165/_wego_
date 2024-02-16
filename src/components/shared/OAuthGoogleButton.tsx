@@ -18,8 +18,6 @@ function OAuthGoogleButton(props: OAuthGoogleButtonProps) {
     try {
       const supabase = createClient();
 
-      console.log(process.env.NEXT_PUBLIC_OAUTH_REDIRECT_URL);
-
       const res = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -31,6 +29,7 @@ function OAuthGoogleButton(props: OAuthGoogleButtonProps) {
             process.env.NEXT_PUBLIC_SITE_URL + '/auth/google/callback',
         },
       });
+      console.log('res', res);
       router.refresh();
     } catch (error) {
       console.error('error', error);

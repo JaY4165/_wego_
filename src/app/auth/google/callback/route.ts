@@ -12,7 +12,6 @@ export async function GET(request: NextRequest) {
     const supabase = createSupabaseServerClient()
     await supabase.auth.exchangeCodeForSession(code)
   }
-
   // URL to redirect to after sign in process completes
   return NextResponse.redirect(process.env.NEXT_PUBLIC_SITE_URL + `/trip-planner`);
 }
