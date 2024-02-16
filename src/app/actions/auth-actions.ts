@@ -2,6 +2,7 @@
 
 import { createSupabaseServerClient } from '@/utils/supabase/supaBaseServer';
 import { signupFormSchema } from '@/utils/validations';
+import { revalidatePath } from 'next/cache';
 import z from 'zod';
 
 export async function signUpWithEmailAndPassword(
@@ -12,7 +13,6 @@ export async function signUpWithEmailAndPassword(
         email: data.email,
         password: data.password,
     });
-
     return JSON.stringify(result);
 }
 

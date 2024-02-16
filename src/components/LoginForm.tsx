@@ -70,7 +70,7 @@ export default function LoginForm() {
             description: 'You have been logged in successfully',
             duration: 5000,
           });
-          router.push('/');
+          router.replace('/');
         }
         form.reset();
       });
