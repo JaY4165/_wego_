@@ -25,8 +25,9 @@ function OAuthGoogleButton(props: OAuthGoogleButtonProps) {
             access_type: 'offline',
             prompt: 'consent',
           },
-          redirectTo:
-            process.env.NEXT_PUBLIC_SITE_URL + '/auth/google/callback',
+          redirectTo: getURL() + '/auth/google/callback',
+          // process.env.NEXT_PUBLIC_SITE_URL + '/auth/google/callback',
+          // 'http://localhost:3000/auth/google/callback',
         },
       });
       console.log('res', res);
@@ -71,7 +72,9 @@ function OAuthGoogleButton(props: OAuthGoogleButtonProps) {
           ></path>
         </svg>
       )}{' '}
-      Sign in with Google
+      {props.buttonType === 'signin'
+        ? 'Sign in with Google'
+        : 'Sign up with Google'}
     </Button>
   );
 }

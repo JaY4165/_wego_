@@ -1,16 +1,25 @@
+import { Button } from '@/components/ui/button';
+import { ArrowRight } from 'lucide-react';
+import Link from 'next/link';
+
 export default function Home() {
   return (
-    <div className="pt-16">
+    <div className="max-h-screen flex justify-center items-center">
       <section className="relative">
-        <div className="relative z-10 max-w-screen-xl mx-auto px-4 py-28 md:px-8">
+        <div className="relative z-10 max-w-screen-xl mx-auto px-4 py-40 md:px-8">
           <div className="space-y-5 max-w-4xl mx-auto text-center">
-            <h2 className="text-4xl dark:text-white font-extrabold mx-auto md:text-5xl lg:text-8xl text-black">
+            <h2 className="text-5xl dark:text-white font-extrabold mx-auto md:text-6xl lg:text-8xl text-black">
               Welcome to WeGo
             </h2>
-            <p className="max-w-2xl mx-auto text-black dark:text-white">
+            <p className="max-w-2xl mx-auto text-black dark:text-white pb-5">
               Explore effortlessly with Wego, your AI travel buddy, making every
-              trip a breeze on our progressive web app.
+              trip a breeze.
             </p>
+            <Link className="" href={'/trip-planner'}>
+              <Button>
+                Plan Your Trip <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
           </div>
         </div>
         <div

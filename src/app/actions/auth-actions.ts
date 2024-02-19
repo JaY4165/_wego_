@@ -2,7 +2,7 @@
 
 import { createSupabaseServerClient } from '@/utils/supabase/supaBaseServer';
 import { signupFormSchema } from '@/utils/validations';
-import { revalidatePath } from 'next/cache';
+
 import z from 'zod';
 
 export async function signUpWithEmailAndPassword(

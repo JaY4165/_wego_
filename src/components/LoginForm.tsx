@@ -22,11 +22,12 @@ import { useMutation } from '@tanstack/react-query';
 import { toast } from '@/components/ui/use-toast';
 import { useRouter } from 'next/navigation';
 import OAuthGoogleButton from './shared/OAuthGoogleButton';
+import Link from 'next/link';
 
 export default function LoginForm() {
   const passwordRef = useRef<HTMLInputElement>(null);
   const [showPwd, setShowPwd] = useState(false);
-  let [isPending, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
   const form = useForm<z.infer<typeof loginFormSchema>>({
@@ -64,6 +65,7 @@ export default function LoginForm() {
             duration: 5000,
             variant: 'destructive',
           });
+          form.reset();
         } else {
           toast({
             title: 'Logged In Successfully',
@@ -72,7 +74,6 @@ export default function LoginForm() {
           });
           router.replace('/trip-planner');
         }
-        form.reset();
       });
     } catch (error: any) {
       console.error(error);
@@ -154,6 +155,16 @@ export default function LoginForm() {
         or
       </div>
       <OAuthGoogleButton isPending={isPending} buttonType={'signin'} />
+      <div className="pt-5 text-center">
+        <p>
+          Don&apos;t have an account ? &nbsp;
+          <span className="">
+            <Link href={'/signup'} className="underline">
+              Signup for free
+            </Link>
+          </span>
+        </p>
+      </div>
     </>
   );
 }

@@ -18,6 +18,22 @@
   animation-iteration-count: infinite;
 }
 
+.main-gradient2 {
+  background: linear-gradient(
+    106.89deg,
+    rgba(244, 196, 48, 0.5) 30%,
+    rgba(80, 200, 120, 0.5) 43%,
+    rgb(75, 0, 130, 0.5) 115.91%,
+    rgb(75, 0, 130, 0.5) 115.91%,
+    rgba(80, 200, 120, 0.5) 43%,
+    rgba(244, 196, 48, 0.5) 30%
+  );
+  background-size: 200% 100%;
+  animation: gradient-change 7s ease-in-out infinite forwards;
+  -webkit-animation: gradient-change 7s ease-in-out infinite forwards;
+  animation-iteration-count: infinite;
+}
+
 @keyframes gradient-change {
   0% {
     background-position: 0 0;

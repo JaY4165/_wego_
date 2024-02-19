@@ -1,9 +1,13 @@
 import React from 'react';
+import TripPlannerForm from '@/components/TripPlannerForm';
 
-type Props = {};
-
-function page({}: Props) {
-  return <div>page</div>;
+export default async function TripPlanner() {
+  return (
+    <div className="w-full flex items-center justify-center">
+      <section className="py-20 w-full  md:w-[50%] lg:w-[50%] relative">
+        <TripPlannerForm />
+        <div className="absolute inset-0 m-auto h-[357px] blur-[118px] main-gradient2 -z-50"></div>
+      </section>
+    </div>
+  );
 }
-
-export default page;
