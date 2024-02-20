@@ -101,7 +101,13 @@ export const tripPlannerFormSchema = z.object({
     .max(3, {
       message: 'Trip days must be at most 3',
     }),
-  language: z.string({
-    required_error: "Please select a language.",
+  country: z.string({
+    required_error: "Please select a country.",
+  }),
+  state: z.string({
+    required_error: "Please select a state.",
+  }),
+  city: z.string({
+    required_error: "Please select a city.",
   }),
 });

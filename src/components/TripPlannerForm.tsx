@@ -38,28 +38,27 @@ import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { planTrip } from '@/app/actions/trip-plan-actions';
 import { toast } from '@/components/ui/use-toast';
+import axios from 'axios';
 
 export default function CardWithForm() {
   const router = useRouter();
   const [isPending, startTransition] = React.useTransition();
-  const languages = [
-    { label: 'English', value: 'en' },
-    { label: 'French', value: 'fr' },
-    { label: 'German', value: 'de' },
-    { label: 'Spanish', value: 'es' },
-    { label: 'Portuguese', value: 'pt' },
-    { label: 'Russian', value: 'ru' },
-    { label: 'Japanese', value: 'ja' },
-    { label: 'Korean', value: 'ko' },
-    { label: 'Chinese', value: 'zh' },
-  ] as const;
+  const [countries, setCountries]: any[] = React.useState([]);
+  const [states, setStates]: any[] = React.useState([]);
+  const [cities, setCities]: any[] = React.useState([]);
+  const [countryCode, setCountryCode] = React.useState<string>('');
+  const [stateCode, setStateCode] = React.useState<string>('');
+  const [countrySelected, setCountrySelected] = React.useState<boolean>(false);
+  const [stateSelected, setStateSelected] = React.useState<boolean>(false);
 
   const form = useForm<z.infer<typeof tripPlannerFormSchema>>({
     resolver: zodResolver(tripPlannerFormSchema),
     defaultValues: {
       tripDays: 1,
       placesPerDay: 1,
-      language: 'en',
+      country: '',
+      state: '',
+      city: '',
     },
   });
 
@@ -94,6 +93,7 @@ export default function CardWithForm() {
         //   });
         //   // router.replace('/');
         // }
+        console.log(data, 'result');
       });
     } catch (error: any) {
       console.error(error);
@@ -103,6 +103,71 @@ export default function CardWithForm() {
   async function onReset() {
     form.reset();
   }
+
+  const changeCountry = form.getFieldState('country').isTouched;
+  const changeState = form.getFieldState('state').isTouched;
+
+  React.useEffect(() => {
+    const config1 = {
+      method: 'get',
+      url: 'https://api.countrystatecity.in/v1/countries',
+      headers: {
+        'X-CSCAPI-KEY': process.env.NEXT_PUBLIC_LOCATIONS_API_KEY as string,
+      },
+    };
+
+    axios(config1)
+      .then(function (response) {
+        const data = response.data;
+        // console.log(data);
+        setCountries(data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, []);
+
+  React.useEffect(() => {
+    const config2 = {
+      method: 'get',
+      url: `https://api.countrystatecity.in/v1/countries/${String(countryCode)}/states`,
+      headers: {
+        'X-CSCAPI-KEY': process.env.NEXT_PUBLIC_LOCATIONS_API_KEY as string,
+      },
+    };
+
+    console.log(countryCode, 'countryCode');
+
+    axios(config2)
+      .then(function (response) {
+        const res = response.data;
+        setStates(res);
+        console.log(res);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, [countryCode]);
+
+  React.useEffect(() => {
+    var config3 = {
+      method: 'get',
+      url: `https://api.countrystatecity.in/v1/countries/${String(countryCode)}/states/${String(stateCode)}/cities`,
+      headers: {
+        'X-CSCAPI-KEY': process.env.NEXT_PUBLIC_LOCATIONS_API_KEY as string,
+      },
+    };
+
+    axios(config3)
+      .then(function (response) {
+        const res = response.data;
+        console.log(res);
+        setCities(res);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, [countryCode, stateCode]);
 
   return (
     <Card className={cn('w-full', 'z-50')}>
@@ -116,7 +181,7 @@ export default function CardWithForm() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="grid w-full items-center gap-4 space-y-3">
-              <div className="flex flex-col space-y-1.5">
+              <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="tripDays"
@@ -137,8 +202,7 @@ export default function CardWithForm() {
                     </FormItem>
                   )}
                 />
-              </div>
-              <div className="flex flex-col space-y-1.5">
+
                 <FormField
                   control={form.control}
                   name="placesPerDay"
@@ -163,10 +227,10 @@ export default function CardWithForm() {
               <div className="flex flex-col space-y-1.5">
                 <FormField
                   control={form.control}
-                  name="language"
+                  name="country"
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
-                      <FormLabel>Language</FormLabel>
+                      <FormLabel>Select a country</FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
@@ -179,37 +243,161 @@ export default function CardWithForm() {
                               )}
                             >
                               {field.value
-                                ? languages.find(
-                                    (language) =>
-                                      language.value === field.value,
-                                  )?.label
-                                : 'Select language'}
+                                ? countries.find(
+                                    (country: any) =>
+                                      country.name === field.value,
+                                  )?.name
+                                : 'Select Country'}
                               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
-                        <PopoverContent className="w-full p-0">
-                          <Command className={cn('w-full')}>
-                            <CommandInput placeholder="Search state..." />
-                            <CommandEmpty>No state found.</CommandEmpty>
-                            <CommandGroup>
-                              {languages.map((language) => (
+                        <PopoverContent className="w-[200px] h-60 p-0">
+                          <Command>
+                            <CommandInput placeholder="Search language..." />
+                            <CommandEmpty>No Country Found.</CommandEmpty>
+                            <CommandGroup className="overflow-y-scroll">
+                              {countries.map((country: any) => (
                                 <CommandItem
-                                  value={language.label}
-                                  key={language.value}
+                                  value={country.name}
+                                  key={country.id}
                                   onSelect={() => {
-                                    form.setValue('language', language.value);
+                                    form.setValue('country', country.name);
+                                    setCountryCode(country.iso2);
+                                    setCountrySelected(true);
                                   }}
                                 >
                                   <Check
                                     className={cn(
                                       'mr-2 h-4 w-4',
-                                      language.value === field.value
+                                      country.name === field.value
                                         ? 'opacity-100'
                                         : 'opacity-0',
                                     )}
                                   />
-                                  {language.label}
+                                  {country.name}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="state"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Select a state</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              disabled={!countrySelected}
+                              className={cn(
+                                'w-full justify-between',
+                                !field.value && 'text-muted-foreground',
+                              )}
+                            >
+                              {field.value
+                                ? states.find(
+                                    (st: any) => st.name === field.value,
+                                  )?.name
+                                : 'Select state'}
+                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[200px]  h-60 p-0">
+                          <Command>
+                            <CommandInput placeholder="Search language..." />
+                            <CommandEmpty>No state found.</CommandEmpty>
+                            <CommandGroup className="overflow-y-scroll">
+                              {states.map((st: any) => (
+                                <CommandItem
+                                  value={st.name}
+                                  key={st.id}
+                                  onSelect={() => {
+                                    form.setValue('state', st.name);
+                                    setStateCode(st.iso2);
+                                    setStateSelected(true);
+                                  }}
+                                >
+                                  <Check
+                                    className={cn(
+                                      'mr-2 h-4 w-4',
+                                      st.name === field.value
+                                        ? 'opacity-100'
+                                        : 'opacity-0',
+                                    )}
+                                  />
+                                  {st.name}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="city"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Select a city</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              disabled={!stateSelected}
+                              className={cn(
+                                'w-full justify-between',
+                                !field.value && 'text-muted-foreground',
+                              )}
+                            >
+                              {field.value
+                                ? cities.find(
+                                    (ct: any) => ct.name === field.value,
+                                  )?.name
+                                : 'Select state'}
+                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[200px]  h-60 p-0">
+                          <Command>
+                            <CommandInput placeholder="Search language..." />
+                            <CommandEmpty>No city found.</CommandEmpty>
+                            <CommandGroup className="overflow-y-scroll">
+                              {cities.map((ct: any) => (
+                                <CommandItem
+                                  value={ct.name}
+                                  key={ct.id}
+                                  onSelect={() => {
+                                    form.setValue('city', ct.name);
+                                  }}
+                                >
+                                  <Check
+                                    className={cn(
+                                      'mr-2 h-4 w-4',
+                                      ct.name === field.value
+                                        ? 'opacity-100'
+                                        : 'opacity-0',
+                                    )}
+                                  />
+                                  {ct.name}
                                 </CommandItem>
                               ))}
                             </CommandGroup>

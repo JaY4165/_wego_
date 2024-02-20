@@ -11,6 +11,7 @@
     "format:fix": "prettier --write --list-different ."
   },
   "dependencies": {
+    "@google/generative-ai": "^0.2.1",
     "@hookform/resolvers": "^3.3.4",
     "@prisma/client": "^5.9.0",
     "@radix-ui/react-avatar": "^1.0.4",
