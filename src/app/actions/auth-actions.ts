@@ -1,7 +1,7 @@
 'use server';
 
 import { createSupabaseServerClient } from '@/utils/supabase/supaBaseServer';
-import { signupFormSchema } from '@/utils/validations';
+import { signupFormSchema } from '@/utils/validations/authValidations';
 
 import z from 'zod';
 

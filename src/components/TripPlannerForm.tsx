@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -12,7 +11,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { tripPlannerFormSchema } from '@/utils/validations';
+import { tripPlannerFormSchema } from '@/utils/validations/itirenaryValidations';
 import {
   FormLabel,
   Form,
@@ -39,6 +38,10 @@ import { useRouter } from 'next/navigation';
 import { planTrip } from '@/app/actions/trip-plan-actions';
 import { toast } from '@/components/ui/use-toast';
 import axios from 'axios';
+import useItineraryStore, {
+  Itinerary,
+  ItineraryStoreActions,
+} from '@/stores/iternary-store';
 
 export default function CardWithForm() {
   const router = useRouter();
@@ -50,6 +53,9 @@ export default function CardWithForm() {
   const [stateCode, setStateCode] = React.useState<string>('');
   const [countrySelected, setCountrySelected] = React.useState<boolean>(false);
   const [stateSelected, setStateSelected] = React.useState<boolean>(false);
+  const changeItinerary = useItineraryStore(
+    (state: ItineraryStoreActions) => state.setItinerary,
+  );
 
   const form = useForm<z.infer<typeof tripPlannerFormSchema>>({
     resolver: zodResolver(tripPlannerFormSchema),
@@ -73,27 +79,40 @@ export default function CardWithForm() {
   });
 
   function onSubmit(data: z.infer<typeof tripPlannerFormSchema>) {
+    console.log(data, 'data');
     try {
       startTransition(async () => {
-        const result: any = (await mutation.mutateAsync(data)) as any;
+        if (data.country === '' || data.state === '' || data.city === '') {
+          toast({
+            title: 'Error',
+            description: 'Please select a country, state and city',
+            duration: 5000,
+            variant: 'destructive',
+          });
+          return;
+        }
+        const result: Itinerary = (await mutation.mutateAsync(
+          data,
+        )) as Itinerary;
 
-        // if (!result?.error) {
-        //   toast({
-        //     title: 'Error',
-        //     description: result.error.message,
-        //     duration: 5000,
-        //     variant: 'destructive',
-        //   });
-        //   form.reset();
-        // } else {
-        //   toast({
-        //     title: 'Trip planned Successfully',
-        //     // description: 'You have been logged in successfully',
-        //     duration: 5000,
-        //   });
-        //   // router.replace('/');
-        // }
-        console.log(data, 'result');
+        if (!result) {
+          toast({
+            title: 'Error',
+            description: "Couldn't plan trip, please try again later.",
+            duration: 5000,
+            variant: 'destructive',
+          });
+          form.reset();
+        } else {
+          toast({
+            title: 'Trip planned Successfully',
+            // description: 'You have been logged in successfully',
+            duration: 5000,
+          });
+        }
+        changeItinerary(result);
+        console.log(result, 'parsedResult');
+        // router.replace('/trip-planner/itinerary');
       });
     } catch (error: any) {
       console.error(error);
@@ -104,9 +123,6 @@ export default function CardWithForm() {
     form.reset();
   }
 
-  const changeCountry = form.getFieldState('country').isTouched;
-  const changeState = form.getFieldState('state').isTouched;
-
   React.useEffect(() => {
     const config1 = {
       method: 'get',
@@ -116,18 +132,23 @@ export default function CardWithForm() {
       },
     };
 
-    axios(config1)
-      .then(function (response) {
-        const data = response.data;
-        // console.log(data);
-        setCountries(data);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    try {
+      axios(config1)
+        .then(function (response) {
+          const data = response.data;
+          // console.log(data);
+          setCountries(data);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    } catch (error) {
+      console.log(error);
+    }
   }, []);
 
   React.useEffect(() => {
+    if ((countryCode === '' && countries.length === 0) || !countryCode) return;
     const config2 = {
       method: 'get',
       url: `https://api.countrystatecity.in/v1/countries/${String(countryCode)}/states`,
@@ -135,21 +156,23 @@ export default function CardWithForm() {
         'X-CSCAPI-KEY': process.env.NEXT_PUBLIC_LOCATIONS_API_KEY as string,
       },
     };
-
-    console.log(countryCode, 'countryCode');
-
-    axios(config2)
-      .then(function (response) {
-        const res = response.data;
-        setStates(res);
-        console.log(res);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  }, [countryCode]);
+    try {
+      axios(config2)
+        .then(function (response) {
+          const res = response.data;
+          setStates(res);
+          // console.log(res);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  }, [countries.length, countryCode]);
 
   React.useEffect(() => {
+    if ((stateCode === '' && states.length === 0) || !stateCode) return;
     var config3 = {
       method: 'get',
       url: `https://api.countrystatecity.in/v1/countries/${String(countryCode)}/states/${String(stateCode)}/cities`,
@@ -158,16 +181,20 @@ export default function CardWithForm() {
       },
     };
 
-    axios(config3)
-      .then(function (response) {
-        const res = response.data;
-        console.log(res);
-        setCities(res);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  }, [countryCode, stateCode]);
+    try {
+      axios(config3)
+        .then(function (response) {
+          const res = response.data;
+          // console.log(res);
+          setCities(res);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  }, [countryCode, stateCode, states.length]);
 
   return (
     <Card className={cn('w-full', 'z-50')}>
@@ -194,6 +221,7 @@ export default function CardWithForm() {
                         <Input
                           placeholder="Number of trip days"
                           type="number"
+                          required
                           min={1}
                           {...field}
                         />
@@ -216,6 +244,7 @@ export default function CardWithForm() {
                           placeholder="Number of places per day"
                           type="number"
                           min={1}
+                          required
                           {...field}
                         />
                       </FormControl>
@@ -254,7 +283,10 @@ export default function CardWithForm() {
                         </PopoverTrigger>
                         <PopoverContent className="w-[200px] h-60 p-0">
                           <Command>
-                            <CommandInput placeholder="Search language..." />
+                            <CommandInput
+                              placeholder="Search language..."
+                              required
+                            />
                             <CommandEmpty>No Country Found.</CommandEmpty>
                             <CommandGroup className="overflow-y-scroll">
                               {countries.map((country: any) => (
@@ -317,7 +349,10 @@ export default function CardWithForm() {
                         </PopoverTrigger>
                         <PopoverContent className="w-[200px]  h-60 p-0">
                           <Command>
-                            <CommandInput placeholder="Search language..." />
+                            <CommandInput
+                              placeholder="Search language..."
+                              required
+                            />
                             <CommandEmpty>No state found.</CommandEmpty>
                             <CommandGroup className="overflow-y-scroll">
                               {states.map((st: any) => (

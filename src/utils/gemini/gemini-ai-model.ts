@@ -5,12 +5,13 @@ import {
     HarmCategory,
     HarmBlockThreshold,
 } from "@google/generative-ai";
+import { tripPlannerFormSchema } from "../validations/itirenaryValidations";
+import { z } from "zod";
 
 const MODEL_NAME: string = process.env.GENERATIVE_MODEL_NAME as string;
 const API_KEY: string = process.env.GEMINI_PRO_API_KEY as string;
 
-export default async function generateIternary() {
-    console.log(MODEL_NAME, API_KEY, "this is api")
+export default async function generateIternary(data: z.infer<typeof tripPlannerFormSchema>) {
     const genAI = new GoogleGenerativeAI(API_KEY);
     const model = genAI.getGenerativeModel({ model: MODEL_NAME });
 
@@ -40,8 +41,13 @@ export default async function generateIternary() {
         },
     ];
 
+
+
+
+    const preText = `plan a itinerary with the best places in ${data.city}, ${data.state} , ${data.country}, and number of trip days should be strictly ${String(data.tripDays)}, and number of places to visit per day should be strictly ${String(data.placesPerDay)},  with the following details:\nformat of the output should be strictly based on the below shape :\n{\n  \"itinerary\": { \n   [day]: [\n      {\n        \"place_name\": \"string\",\n        \"latitude\": \"number\",\n        \"longitude\": \"number\",\n        \"rating\": \"number\",\n        \"open_timings\": \"string\",\n        \"close_timings\": \"string\",\n        \"cost_per_person\": \"number\"\n      }\n    ]\n  }\n}\nstrictly follow the above object format.\n`;
+
     const parts = [
-        { text: "plan a itinerary with the best places in Whitefield, Bengaluru, Karnataka, with the following details:\nformat of the output should be strictly based on the below shape :\n{\n[{\nplace name ,\nlatitude,\nlongitude,\nrating,\nopen and close timings,\ncost per person,\n}]\n}\nstrictly follow the above object format." },
+        { text: String(preText) },
     ];
 
 

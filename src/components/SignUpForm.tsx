@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from './ui/checkbox';
-import { signupFormSchema } from '@/utils/validations';
+import { signupFormSchema } from '@/utils/validations/authValidations';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { signUpWithEmailAndPassword } from '@/app/actions/auth-actions';

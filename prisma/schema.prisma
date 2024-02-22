@@ -10,14 +10,3 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Tier {
-  FREE
-  PRO
-}
-
-model Profile {
-  id String @id @db.Uuid
-  tier Tier @default(FREE)
-
-  @@map("profiles")
-}

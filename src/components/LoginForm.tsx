@@ -16,7 +16,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Checkbox } from './ui/checkbox';
 import { useEffect, useRef, useState, useTransition } from 'react';
-import { loginFormSchema } from '@/utils/validations';
+import { loginFormSchema } from '@/utils/validations/authValidations';
 import { signInWithEmailAndPassword } from '@/app/actions/auth-actions';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from '@/components/ui/use-toast';
