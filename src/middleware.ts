@@ -4,7 +4,6 @@ import { supaMiddleware } from './utils/supabase/supaMiddleware';
 export async function middleware(request: NextRequest) {
   const { supabase, response } = await supaMiddleware(request);
   const user = await supabase.auth.getUser();
-  const session = await supabase.auth.getSession();
   let loggedIn: Boolean = false;
 
   if (user?.data?.user?.email) {

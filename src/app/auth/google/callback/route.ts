@@ -1,4 +1,3 @@
-import { getURL } from '@/utils/getURL';
 import { createSupabaseServerClient } from '@/utils/supabase/supaBaseServer';
 import { NextResponse } from 'next/server'
 

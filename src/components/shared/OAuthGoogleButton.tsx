@@ -4,7 +4,7 @@ import React from 'react';
 import { Button } from '../ui/button';
 import { Loader } from 'lucide-react';
 import { createClient } from '@/utils/supabase/supaBaseClient';
-import { redirect, useRouter } from 'next/navigation';
+import {  useRouter } from 'next/navigation';
 import { getURL } from '@/utils/getURL';
 
 type OAuthGoogleButtonProps = {
