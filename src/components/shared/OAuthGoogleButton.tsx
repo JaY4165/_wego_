@@ -30,7 +30,7 @@ function OAuthGoogleButton(props: OAuthGoogleButtonProps) {
           // 'http://localhost:3000/auth/google/callback',
         },
       });
-      console.log('res', res);
+      // console.log('res', res);
       router.refresh();
     } catch (error) {
       console.error('error', error);

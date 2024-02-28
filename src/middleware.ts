@@ -1,10 +1,15 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { supaMiddleware } from './utils/supabase/supaMiddleware';
+import { UserResponse } from '@supabase/supabase-js';
 
 export async function middleware(request: NextRequest) {
   const { supabase, response } = await supaMiddleware(request);
-  const user = await supabase.auth.getUser();
+  const user: UserResponse = await supabase.auth.getUser();
   let loggedIn: Boolean = false;
+
+  if (user?.error) {
+
+  }
 
   if (user?.data?.user?.email) {
     loggedIn = true;
@@ -21,10 +26,6 @@ export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname === '/trip-planner' && loggedIn === false) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
-
-
-
-  return response;
 }
 
 export const config = {

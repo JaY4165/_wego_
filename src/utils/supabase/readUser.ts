@@ -7,6 +7,5 @@ export default async function readUser() {
   noStore();
   const supabase = createSupabaseServerClient();
   const user = await supabase.auth.getUser();
-  const session = await supabase.auth.getSession();
-  return { user, session };
+  return { user };
 }

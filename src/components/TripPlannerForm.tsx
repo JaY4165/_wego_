@@ -112,7 +112,8 @@ export default function CardWithForm() {
         }
         changeItinerary(result);
         console.log(result, 'parsedResult');
-        // router.replace('/trip-planner/itinerary');
+        const tripId = await String(result.id);
+        router.push(`/trip/${tripId}`);
       });
     } catch (error: any) {
       console.error(error);
@@ -284,7 +285,7 @@ export default function CardWithForm() {
                         <PopoverContent className="w-[200px] h-60 p-0">
                           <Command>
                             <CommandInput
-                              placeholder="Search language..."
+                              placeholder="Search Country..."
                               required
                             />
                             <CommandEmpty>No Country Found.</CommandEmpty>
@@ -350,7 +351,7 @@ export default function CardWithForm() {
                         <PopoverContent className="w-[200px]  h-60 p-0">
                           <Command>
                             <CommandInput
-                              placeholder="Search language..."
+                              placeholder="Search State..."
                               required
                             />
                             <CommandEmpty>No state found.</CommandEmpty>
@@ -406,14 +407,14 @@ export default function CardWithForm() {
                                 ? cities.find(
                                     (ct: any) => ct.name === field.value,
                                   )?.name
-                                : 'Select state'}
+                                : 'Select city'}
                               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
                         <PopoverContent className="w-[200px]  h-60 p-0">
                           <Command>
-                            <CommandInput placeholder="Search language..." />
+                            <CommandInput placeholder="Search City..." />
                             <CommandEmpty>No city found.</CommandEmpty>
                             <CommandGroup className="overflow-y-scroll">
                               {cities.map((ct: any) => (
