@@ -42,6 +42,7 @@ import useItineraryStore, {
   Itinerary,
   ItineraryStoreActions,
 } from '@/stores/iternary-store';
+import prisma from '@/lib/db';
 
 export default function CardWithForm() {
   const router = useRouter();
@@ -111,8 +112,11 @@ export default function CardWithForm() {
           });
         }
         changeItinerary(result);
+        // if(result){
+        //   await prisma.
+        // }
         console.log(result, 'parsedResult');
-        const tripId = await String(result.id);
+        const tripId = String(result.id);
         router.push(`/trip/${tripId}`);
       });
     } catch (error: any) {
