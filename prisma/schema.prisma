@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,3 +7,33 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model itineraries {
+  id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at        DateTime            @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime            @updatedAt @db.Timestamptz(6)
+  user_id           String              @default(dbgenerated("auth.uid()")) @db.Uuid
+  profiles          profiles            @relation(fields: [user_id], references: [user_id], onDelete: Cascade, map: "public_itineraries_user_id_fkey")
+  itinerary_objects itinerary_objects[]
+}
+
+model itinerary_objects {
+  id           String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at   DateTime    @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime    @updatedAt @db.Timestamptz(6)
+  itinerary_id String      @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  itineraries  itineraries @relation(fields: [itinerary_id], references: [id], onDelete: Cascade)
+}
+
+model profiles {
+  id           String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id      String        @unique @default(dbgenerated("auth.uid()")) @db.Uuid
+  email        String        @unique
+  subscription PlanType      @default(free)
+  created_at   DateTime      @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime      @updatedAt @db.Timestamptz(6)
+  itineraries  itineraries[]
+}
+
+enum PlanType {
+  free
+}
