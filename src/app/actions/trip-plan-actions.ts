@@ -35,6 +35,7 @@ export async function storeItinerary(data: Itinerary) {
 }
 
 
+
 export async function fetchItinerary(id: string) {
     const { user } = await readUser();
     const itinerary = await prisma?.itineraries.findFirst({
