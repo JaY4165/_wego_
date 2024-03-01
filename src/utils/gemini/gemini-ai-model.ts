@@ -44,7 +44,7 @@ export default async function generateIternary(data: z.infer<typeof tripPlannerF
 
 
 
-    const preText = `plan a itinerary with the best places in ${data.city}, ${data.state} , ${data.country}, and number of trip days should be strictly ${String(data.tripDays)}, and number of places to visit per day should be strictly ${String(data.placesPerDay)},  with the following details:\nformat of the output should be strictly based on the below shape :\n{\n  \"itinerary\": { \n   [day]: [\n      {\n        \"place_name\": \"string\",\n        \"latitude\": \"number\",\n        \"longitude\": \"number\",\n        \"rating\": \"number\",\n        \"open_timings\": \"string\",\n        \"close_timings\": \"string\",\n        \"cost_per_person\": \"number\"\n      }\n    ]\n  }\n}\nstrictly follow the above object format.\n`;
+    const preText = `plan a itinerary with the best places in ${data.city}, ${data.state} , ${data.country}, and number of trip days should be strictly ${String(data.tripDays)}, and number of places to visit per day should be strictly ${String(data.placesPerDay)},  with the following details:\nformat of the output should be strictly based on the below shape :\n{\n  \"itinerary\": { \n   [day]: [\n      {\n        \"place_name\": \"string\",\n        \"latitude\": \"number\",\n        \"longitude\": \"number\",\n        \"rating\": \"number\",\n        \"open_timings\": \"string\",\n        \"close_timings\": \"string\",\n        \"cost_per_person\": \"number\"\n     \"address\": \"string\"\n      }\n    ]\n  }\n}\nstrictly follow the above object format.\n`;
 
     const parts = [
         { text: String(preText) },

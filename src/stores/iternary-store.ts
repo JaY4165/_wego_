@@ -13,6 +13,7 @@ export interface Place {
     open_timings: string;
     close_timings: string;
     cost_per_person: number;
+    address: string;
 }
 
 export type ItineraryStoreState = {

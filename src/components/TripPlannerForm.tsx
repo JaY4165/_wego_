@@ -35,14 +35,13 @@ import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { cn } from '@/lib/utils';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { planTrip } from '@/app/actions/trip-plan-actions';
+import { planTrip, storeItinerary } from '@/app/actions/trip-plan-actions';
 import { toast } from '@/components/ui/use-toast';
 import axios from 'axios';
 import useItineraryStore, {
   Itinerary,
   ItineraryStoreActions,
 } from '@/stores/iternary-store';
-import prisma from '@/lib/db';
 
 export default function CardWithForm() {
   const router = useRouter();
@@ -79,7 +78,7 @@ export default function CardWithForm() {
     },
   });
 
-  function onSubmit(data: z.infer<typeof tripPlannerFormSchema>) {
+  async function onSubmit(data: z.infer<typeof tripPlannerFormSchema>) {
     console.log(data, 'data');
     try {
       startTransition(async () => {
@@ -104,6 +103,7 @@ export default function CardWithForm() {
             variant: 'destructive',
           });
           form.reset();
+          return;
         } else {
           toast({
             title: 'Trip planned Successfully',
@@ -112,10 +112,9 @@ export default function CardWithForm() {
           });
         }
         changeItinerary(result);
-        // if(result){
-        //   await prisma.
-        // }
+
         console.log(result, 'parsedResult');
+        await storeItinerary(result);
         const tripId = String(result.id);
         router.push(`/trip/${tripId}`);
       });
