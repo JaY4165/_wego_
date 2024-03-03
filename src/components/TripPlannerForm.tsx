@@ -42,7 +42,7 @@ import useItineraryStore, {
   Itinerary,
   ItineraryStoreActions,
 } from '@/stores/iternary-store';
-import { updateItineraryWithGeocoding } from '@/utils/map-helpers';
+
 
 export default function CardWithForm() {
   const router = useRouter();
@@ -115,9 +115,9 @@ export default function CardWithForm() {
         changeItinerary(result);
 
         console.log(result, 'parsedResult');
-        const res = await updateItineraryWithGeocoding(result);
-        await storeItinerary(res);
-        const tripId = String(res.id);
+
+        await storeItinerary(result);
+        const tripId = String(result.id);
         router.push(`/trip/${tripId}`);
       });
     } catch (error: any) {

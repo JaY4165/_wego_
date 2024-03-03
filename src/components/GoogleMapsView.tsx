@@ -6,10 +6,10 @@ import {
   LoadScriptNext,
   Libraries,
 } from '@react-google-maps/api';
-import { updateItineraryWithGeocoding } from '@/utils/map-helpers';
+
 
 export default function GoogleMapsView(data: any) {
-  // const obj = updateItineraryWithGeocoding(data);
+ 
 
   let lat = 12.977848533593487;
   let lng = 77.63785319619643;

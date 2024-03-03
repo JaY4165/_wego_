@@ -8,7 +8,7 @@ import prisma from '@/lib/db';
 
 async function Navbar() {
   const { user } = await readUser();
-  console.log(user);
+  // console.log(user);
   if (user?.data?.user?.email) {
     const userExists = await prisma.profiles.findUnique({
       where: {

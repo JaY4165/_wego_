@@ -1,29 +1,37 @@
-"use client"
-
-import { Itinerary } from "@/stores/iternary-store";
-import Geocode, { setKey } from 'react-geocode';
+import axios from "axios";
 
 
+export async function updateLatLngs(itineraryData: any) {
+    async function updatePlaceDetails(place: any) {
+        console.log("workingggggggggggggggg")
+        const address = place.address;
+        const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`;
 
-// setKey(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string);
+        try {
+            const response = await axios.get(url);
+            if (!response.data || response.status !== 200) {
+                throw new Error(`Error fetching data: ${response.status}`);
+            }
 
-export async function updateItineraryWithGeocoding(itinerary: Itinerary): Promise<Itinerary> {
+            console.log(response.data.results[0].geometry.location.lat, response.data.results[0].geometry.location.lng)
+            // Extract latitude and longitude from the API response (replace with actual structure)
+            const latitude = response.data.results[0].geometry.location.lat;
+            const longitude = response.data.results[0].geometry.location.lng;
 
-    const updatedItinerary: any = {};
 
-    for (const day in itinerary) {
-        updatedItinerary[day] = itinerary[day].map(async (place) => {
-            const { place_name, address } = place;
-            const geocode = await Geocode.fromAddress(place_name + "," + address, process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string);
-            const { lat, lng } = geocode.results[0].geometry.location;
-            place.latitude = lat;
-            place.longitude = lng;
-            return {
-                ...place,
-            };
-        });
+
+            return { ...place, latitude, longitude };
+        } catch (error) {
+            console.error("Error updating place details:", error);
+            return place;
+        }
     }
 
-    return updatedItinerary as Itinerary;
-}
+    for (const day in itineraryData.itinerary) {
+        itineraryData.itinerary[day] = await Promise.all(
+            itineraryData.itinerary[day].map(updatePlaceDetails)
+        );
+    }
 
+    return itineraryData;
+}
