@@ -1,5 +1,6 @@
 import React from 'react';
 import { fetchItinerary } from '@/app/actions/trip-plan-actions';
+import GoogleMapsView from '@/components/GoogleMapsView';
 
 export default async function TripPage({ params }: { params: { id: string } }) {
   const itinerary = await fetchItinerary(params.id);
@@ -8,6 +9,7 @@ export default async function TripPage({ params }: { params: { id: string } }) {
     <div>
       <pre className="text-xl"> page {JSON.stringify(itinerary)}</pre>
       {/* <p className="text-xl">{JSON.stringify(itinerary) || 'loading...'}</p> */}
+      <GoogleMapsView data={itinerary}/>
     </div>
   );
 }

@@ -22,6 +22,7 @@
     "@radix-ui/react-popover": "^1.0.7",
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-toast": "^1.1.5",
+    "@react-google-maps/api": "^2.19.3",
     "@supabase/ssr": "^0.1.0",
     "@supabase/supabase-js": "^2.39.6",
     "@tanstack/react-query": "^5.18.0",
@@ -35,6 +36,7 @@
     "next-themes": "^0.2.1",
     "react": "^18",
     "react-dom": "^18",
+    "react-geocode": "^1.0.0-alpha.1",
     "react-hook-form": "^7.49.3",
     "sharp": "^0.33.2",
     "tailwind-merge": "^2.2.1",
@@ -60,4 +62,3 @@
     "typescript": "^5"
   }
 }
-

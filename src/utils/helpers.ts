@@ -6,3 +6,5 @@ export function purifyJson(jsonString: string) {
         throw new Error('Invalid JSON provided.');
     }
 }
+
+
