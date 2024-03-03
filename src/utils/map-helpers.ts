@@ -1,11 +1,16 @@
+"use client"
+
 import axios from "axios";
 
 
 export async function updateLatLngs(itineraryData: any) {
+    console.log(itineraryData)
+    let data = itineraryData;
     async function updatePlaceDetails(place: any) {
         console.log("workingggggggggggggggg")
+        const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string
         const address = place.address;
-        const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`;
+        const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${API_KEY}`;
 
         try {
             const response = await axios.get(url);
@@ -23,15 +28,15 @@ export async function updateLatLngs(itineraryData: any) {
             return { ...place, latitude, longitude };
         } catch (error) {
             console.error("Error updating place details:", error);
-            return place;
         }
     }
 
-    for (const day in itineraryData.itinerary) {
-        itineraryData.itinerary[day] = await Promise.all(
-            itineraryData.itinerary[day].map(updatePlaceDetails)
+    for (const day in data.itinerary) {
+        console.log("workingggggggggggggggg", day)
+        data.itinerary[day] = await Promise.all(
+            data.itinerary[day].map(updatePlaceDetails)
         );
     }
 
-    return itineraryData;
+    return data;
 }

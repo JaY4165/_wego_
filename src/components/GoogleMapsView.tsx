@@ -1,15 +1,22 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   GoogleMap,
   Marker,
   LoadScriptNext,
   Libraries,
 } from '@react-google-maps/api';
-
+import { updateLatLngs } from '@/utils/map-helpers';
 
 export default function GoogleMapsView(data: any) {
- 
+  async function ruu() {
+    const res = await updateLatLngs(data);
+    console.log(res, 'this is working');
+  }
+
+  useEffect(() => {
+    ruu();
+  }, [data]);
 
   let lat = 12.977848533593487;
   let lng = 77.63785319619643;
