@@ -43,7 +43,6 @@ import useItineraryStore, {
   ItineraryStoreActions,
 } from '@/stores/iternary-store';
 
-
 export default function CardWithForm() {
   const router = useRouter();
   const [isPending, startTransition] = React.useTransition();

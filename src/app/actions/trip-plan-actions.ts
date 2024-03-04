@@ -46,3 +46,42 @@ export async function fetchItinerary(id: string) {
     });
     return itinerary?.itirenary_object;
 }
+
+
+export async function correctCoords(id: string) {
+    const { user } = await readUser();
+    const itinerary = await prisma?.itineraries.findFirst({
+        where: {
+            user_id: user?.data?.user?.id as string,
+            itirenary_id: id
+        },
+        select: {
+            coordinates_corrected: true
+        }
+    })
+
+    if (itinerary?.coordinates_corrected === true) {
+        return true;
+    }
+
+    return false;
+}
+
+
+export async function updateItinerary(id: string, data: any) {
+    const { user } = await readUser();
+    const res = await prisma?.itineraries.update({
+        where: {
+            user_id: user?.data?.user?.id as string,
+            itirenary_id: id
+        },
+        data: {
+            coordinates_corrected: true,
+            itirenary_object: data
+        },
+        select :{
+            itirenary_object: true
+        }
+    });
+    return res;
+}
