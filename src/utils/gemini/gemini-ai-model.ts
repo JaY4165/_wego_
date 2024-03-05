@@ -58,6 +58,7 @@ export default async function generateIternary(data: z.infer<typeof tripPlannerF
     });
 
     const response = result.response;
+    // console.log(response, 'this is the response from the generative model');
     return response.text();
 }
 

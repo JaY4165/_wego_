@@ -113,7 +113,7 @@ export default function CardWithForm() {
         }
         changeItinerary(result);
 
-        console.log(result, 'parsedResult');
+        // console.log(result, 'parsedResult');
 
         await storeItinerary(result);
         const tripId = String(result.id);

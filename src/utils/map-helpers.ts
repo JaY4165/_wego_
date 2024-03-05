@@ -1,30 +1,41 @@
 "use client"
 
-import axios from "axios";
+import { controlCoord, coordsControl } from "@/app/actions/trip-plan-actions";
+
+import { z } from 'zod';
+
+const placeSchema = z.object({
+    place_name: z.string(),
+    latitude: z.number().finite(),
+    longitude: z.number().finite(),
+    rating: z.number().positive(),
+    open_timings: z.string().optional(),
+    close_timings: z.string().optional(),
+    cost_per_person: z.number().positive(),
+    address: z.string(),
+});
+
+const dayKeySchema = z.string().min(1);
+
+type DaySchema = z.infer<typeof daySchema>;
+
+const daySchema = z.array(placeSchema);
+
+const itinerarySchema = z.record(dayKeySchema, daySchema);
+
+export default itinerarySchema;
+
 
 
 export async function updateLatLngs(itineraryData: any) {
-
-    let data = await JSON.parse(itineraryData);
+    console.log(JSON.parse(itineraryData), 'itineraryData')
+    const data = typeof itineraryData === 'string' ? JSON.parse(itineraryData) : itineraryData;
+    let res: any = null;
 
     async function updatePlaceDetails(place: any) {
-
-        const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string
         const address = place.address;
-        const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${API_KEY}`;
-
-        try {
-            const response = await axios.get(url);
-            if (!response.data || response.status !== 200) {
-                throw new Error(`Error fetching data: ${response.status}`);
-            }
-
-            const latitude = response.data.results[0].geometry.location.lat;
-            const longitude = response.data.results[0].geometry.location.lng;
-            return { ...place, latitude, longitude };
-        } catch (error) {
-            console.error("Error updating place details:", error);
-        }
+        res = controlCoord(address, place);
+        return res;
     }
 
 
@@ -33,6 +44,26 @@ export async function updateLatLngs(itineraryData: any) {
             data[day].map(updatePlaceDetails)
         );
     }
+    return res;
+}
 
-    return data;
+
+
+export async function updateLatsLongs(data: any[]) {
+    let res: any[] = [];
+
+    async function updatePlaceDetails(place: any) {
+        const address = place.place_name + "," + place.address;
+        const coords = await coordsControl(address);
+        if (!coords) return;
+        place.latitude = Number(coords?.latitude);
+        place.longitude = Number(coords?.longitude);
+        res.push(place);
+    }
+
+    for (const place of data) {
+        await updatePlaceDetails(place);
+    }
+
+    return res;
 }
