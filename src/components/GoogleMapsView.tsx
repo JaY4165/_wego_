@@ -21,11 +21,14 @@ export default function GoogleMapsView(props: {
   id: string;
 }): JSX.Element {
   const [places, setPlaces] = React.useState<any>(null);
-  const [center, setCenter] = React.useState({ lat: 9.97779, lng: 76.274349 });
+  const [center, setCenter] = React.useState<{ lat: number; lng: number }>({
+    lat: 9.97779,
+    lng: 76.274349,
+  });
   const [markerData, setMarkerData] = React.useState<any[]>([]);
   const [originalData, setOriginalData] = React.useState<any[]>([]);
 
-  let zoom = 10;
+  let zoom = 14;
   const libraries: Libraries = ['geocoding'];
 
   // useEffect(() => {
@@ -64,7 +67,7 @@ export default function GoogleMapsView(props: {
     async function runWhenUpdatedIsTrue() {
       const fetchedDataWhenTrue: any = (await fetchItinerary(props.id)) as any;
       const parsedRes = await JSON.parse(fetchedDataWhenTrue);
-      console.log(parsedRes, 'fetched when true');
+      // console.log(parsedRes, 'fetched when true');
       setPlaces(parsedRes);
     }
     try {
@@ -85,23 +88,31 @@ export default function GoogleMapsView(props: {
     }
     setMarkerData(marks);
 
-    console.log(markerData, 'markerData');
+    // console.log(markerData, 'markerData');
   }, [places]);
 
   useEffect(() => {
     updateLatsLongs(markerData)
       .then((res) => {
-        console.log(res, 'res');
+        // console.log(res, 'res');
         setOriginalData(res);
-        setCenter({
-          lat: Number(res[0]?.latitude),
-          lng: Number(res[0]?.longitude),
-        });
       })
       .catch((err) => {
         console.log(err, 'err');
       });
   }, [markerData]);
+
+  useEffect(() => {
+    const lat = parseFloat(originalData[0]?.latitude);
+    const lng = parseFloat(originalData[0]?.longitude);
+    if (!isNaN(lat) && !isNaN(lng)) {
+      setCenter({
+        lat: lat,
+        lng: lng,
+      });
+    }
+    // console.log(center, 'center');
+  }, [originalData]);
 
   return (
     <div className="mt-14 px-4 mb-14">
