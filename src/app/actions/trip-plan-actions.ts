@@ -108,28 +108,28 @@ export async function updateItinerary(id: string, data: any) {
 
 
 
-export async function controlCoord(address: string, place: any) {
-    const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string
+// export async function controlCoord(address: string, place: any) {
+//     const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string
 
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${API_KEY}`;
+//     const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${API_KEY}`;
 
-    try {
-        const response = await axios.get(url);
-        if (!response.data || response.status !== 200) {
-            throw new Error(`Error fetching data: ${response.status}`);
-        }
-
-
-        const latitude = response.data.results[0].geometry.location.lat;
-        const longitude = response.data.results[0].geometry.location.lng;
+//     try {
+//         const response = await axios.get(url);
+//         if (!response.data || response.status !== 200) {
+//             throw new Error(`Error fetching data: ${response.status}`);
+//         }
 
 
-        console.log({ ...place, latitude, longitude });
-        return { ...place, latitude, longitude };
-    } catch (error) {
-        console.error("Error updating place details:", error);
-    }
-}
+//         const latitude = response.data.results[0].geometry.location.lat;
+//         const longitude = response.data.results[0].geometry.location.lng;
+
+
+//         console.log({ ...place, latitude, longitude });
+//         return { ...place, latitude, longitude };
+//     } catch (error) {
+//         console.error("Error updating place details:", error);
+//     }
+// }
 
 
 export async function coordsControl(address: string): Promise<{ latitude: number, longitude: number } | undefined> {
@@ -151,5 +151,40 @@ export async function coordsControl(address: string): Promise<{ latitude: number
     catch (error) {
         console.error("Error updating place details:", error);
 
+    }
+}
+
+
+
+
+export async function createRoutes(origin: any, destination: any, waypoints: any[]) {
+
+    const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string
+
+    if (!origin || !destination || !waypoints) return;
+
+    if (origin === null || destination === null || waypoints === null) return;
+
+
+    console.log(origin, destination, waypoints, 'origin, destination, waypoints')
+
+    const url = new URL('https://maps.googleapis.com/maps/api/directions/json');
+    url.searchParams.append('travelMode', 'driving');
+    url.searchParams.append('origin', `${origin.address}`);
+    // url.searchParams.append(
+    //     'waypoints',
+    //     waypoints.map((waypoint: any) => `via:${waypoint.latitude},${waypoint.longitude}`).join('|')
+    // );
+    url.searchParams.append('destination', `${destination.address}`);
+    url.searchParams.append('key', API_KEY as string);
+
+    const response = await axios.get(String(url));
+
+    console.log(String(url))
+
+    if (!response.data || response.status !== 200) {
+        throw new Error(`Error fetching data: ${response.status}`);
+    } else {
+        return response.data;
     }
 }

@@ -1,0 +1,35 @@
+import * as React from 'react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+
+export function PlaceCard({ place }: { place: any }) {
+  return (
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle className="flex justify-between">
+          {place.place_name} <Badge variant={'default'}>{}</Badge>
+        </CardTitle>
+        <CardDescription>{place.place_address}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="flex justify-between dark:text-stone-400 text-black text-sm md:text-md ">
+          <div>
+            <p>Rating: {place.rating}</p>
+            <p>Cost: {place.cost_per_person}</p>
+          </div>
+          <div>
+            <p>Timings: {place.open_timings}</p>
+            {/* <p>Close Timings: {place.close_timings}</p> */}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}

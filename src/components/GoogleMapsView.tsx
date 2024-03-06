@@ -2,18 +2,15 @@
 import React, { useEffect } from 'react';
 import {
   GoogleMap,
-  Marker,
   LoadScriptNext,
   Libraries,
   MarkerF,
   OverlayView,
+  DirectionsRenderer,
+  DirectionsService,
 } from '@react-google-maps/api';
-import { updateLatLngs, updateLatsLongs } from '@/utils/map-helpers';
-import { Prisma } from '@prisma/client';
-import {
-  fetchItinerary,
-  updateItinerary,
-} from '@/app/actions/trip-plan-actions';
+import { createRoutesForData, updateLatsLongs } from '@/utils/map-helpers';
+import { fetchItinerary } from '@/app/actions/trip-plan-actions';
 
 export default function GoogleMapsView(props: {
   data: any;
@@ -27,36 +24,20 @@ export default function GoogleMapsView(props: {
   });
   const [markerData, setMarkerData] = React.useState<any[]>([]);
   const [originalData, setOriginalData] = React.useState<any[]>([]);
+  const [userLocation, setUserLocation] = React.useState<any>({
+    lat: 9.97779,
+    lng: 76.274349,
+  });
+  const [directions, setDirections] = React.useState<any>(null);
+  const mapRef = React.useRef(null);
+  const [googleMap, setGoogleMap] = React.useState<any>(null);
 
   let zoom = 14;
-  const libraries: Libraries = ['geocoding'];
-
-  // useEffect(() => {
-  //   // async function runWhenUpdatedIsFalse() {
-  //   //   const parsedData = await props.data;
-  //   //   // console.log(parsedData, 'parsedDatawhen false');
-  //   //   const res = await updateLatLngs(parsedData);
-  //   //   const resData = await updateItinerary(props.id, res);
-  //   //   // console.log(resData, 'fetched when false');
-  //   //   setPlaces(resData);
-  //   // }
-
-  //   // async function runWhenUpdatedIsTrue() {
-  //   //   const fetchedDataWhenTrue = await fetchItinerary(props.id);
-  //   //   // console.log(fetchedDataWhenTrue, 'fetched when true');
-  //   //   setPlaces(fetchedDataWhenTrue);
-  //   // }
-
-  //   // if (props.isCorrected !== true) {
-  //   //   runWhenUpdatedIsFalse();
-  //   // } else {
-  //   //   runWhenUpdatedIsTrue();
-  //   // }
-  // }, [props.data, props.id, props.isCorrected]);
+  const libraries: Libraries = ['geocoding', 'routes'];
 
   // useEffect(() => {
   //   navigator.geolocation.getCurrentPosition((position) => {
-  //     setCenter({
+  //     setUserLocation({
   //       lat: position.coords.latitude,
   //       lng: position.coords.longitude,
   //     });
@@ -94,8 +75,11 @@ export default function GoogleMapsView(props: {
   useEffect(() => {
     updateLatsLongs(markerData)
       .then((res) => {
-        // console.log(res, 'res');
-        setOriginalData(res);
+        if (res !== null) {
+          setOriginalData(res);
+        } else {
+          setOriginalData([]);
+        }
       })
       .catch((err) => {
         console.log(err, 'err');
@@ -114,9 +98,36 @@ export default function GoogleMapsView(props: {
     // console.log(center, 'center');
   }, [originalData]);
 
+  useEffect(() => {
+    try {
+      createRoutesForData(originalData)
+        .then((res) => {
+          if (res !== null) {
+            setDirections(res);
+          } else {
+            setDirections(null);
+          }
+        })
+        .catch((err) => {
+          console.log('cannot get routes data', 'err');
+        });
+    } catch (error) {
+      console.log('error in creating routes data for map');
+    }
+  }, [originalData]);
+
+  // useEffect(() => {
+  //   console.log('directions', directions);
+  // }, [directions]);
+
+  const onLoad = React.useCallback((map: any) => {
+    mapRef.current = map;
+    setGoogleMap(map);
+  }, []);
+
   return (
     <div className="mt-14 px-4 mb-14">
-      {originalData && (
+      {directions && (
         <LoadScriptNext
           googleMapsApiKey={
             process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string
@@ -127,8 +138,11 @@ export default function GoogleMapsView(props: {
             mapContainerStyle={{ width: '100%', height: '90vh' }}
             zoom={zoom}
             center={center}
+            onLoad={onLoad}
           >
-            {originalData &&
+            {/* <MarkerF position={userLocation} /> */}
+
+            {directions &&
               markerData.map((marker, index) => (
                 <MarkerF
                   key={index}
@@ -148,6 +162,7 @@ export default function GoogleMapsView(props: {
                   </OverlayView>
                 </MarkerF>
               ))}
+            {directions && <DirectionsRenderer directions={directions} />}
           </GoogleMap>
         </LoadScriptNext>
       )}
