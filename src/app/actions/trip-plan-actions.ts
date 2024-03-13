@@ -132,10 +132,11 @@ export async function updateItinerary(id: string, data: any) {
 // }
 
 
-export async function coordsControl(address: string): Promise<{ latitude: number, longitude: number } | undefined> {
+export async function coordsControl(address: string): Promise<{ latitude: number, longitude: number, place_id: string } | undefined> {
     const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string
 
     const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${API_KEY}`;
+
 
     try {
         const response = await axios.get(url);
@@ -143,10 +144,13 @@ export async function coordsControl(address: string): Promise<{ latitude: number
             throw new Error(`Error fetching data: ${response.status}`);
         }
 
+
+
         const latitude = await response.data.results[0].geometry.location.lat;
         const longitude = await response.data.results[0].geometry.location.lng;
+        const place_id = await response.data.results[0].place_id;
 
-        return { latitude, longitude };
+        return { latitude, longitude, place_id };
     }
     catch (error) {
         console.error("Error updating place details:", error);
@@ -154,6 +158,78 @@ export async function coordsControl(address: string): Promise<{ latitude: number
     }
 }
 
+export async function getPlaceIdForAddress(places: any) {
+    let placesWithPlaceId = [];
+    for (const place of places) {
+        const finalAddress = String(place.place_name + ',' + place.address);
+        const data = await coordsControl(finalAddress);
+        placesWithPlaceId.push({ ...place, place_id: data?.place_id });
+    }
+
+    return placesWithPlaceId;
+}
+
+export interface DataOfPlace {
+    html_attributions: any[];
+    result: Result;
+    status: string;
+}
+
+export interface Result {
+    formatted_address: string;
+    geometry: Geometry;
+    icon: string;
+    name: string;
+    photos?: Photo[];
+    rating?: number;
+    user_ratings_total: number;
+    website?: string;
+}
+
+export interface Geometry {
+    location: Location;
+    viewport: Viewport;
+}
+
+export interface Location {
+    lat: number;
+    lng: number;
+}
+
+export interface Viewport {
+    northeast: Location;
+    southwest: Location;
+}
+
+export interface Photo {
+    height: number;
+    html_attributions: string[];
+    photo_reference: string;
+    width: number;
+}
+
+
+
+export async function getImagesForPlaceId(placeId: string) {
+    console.log(placeId, 'placeId')
+    const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string
+    const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,formatted_address,geometry,icon,rating,user_ratings_total,opening_hours,price_level,website,photos,type,url,current_opening_hours,opening_hours,formatted_phone_number,reviews,rating&key=${API_KEY}`;
+
+    // console.log(url, 'url')
+
+    try {
+        const response = await axios.get(url);
+        const res = response.data;
+        if (!response.data || response.data === undefined || response.status !== 200) {
+            throw new Error(`Error fetching data: ${response.status}`);
+        }
+        // console.log(placeId, response.data, 'placeId')
+        return res.result;
+    }
+    catch (error) {
+        console.error("Error updating place details:", error);
+    }
+}
 
 
 

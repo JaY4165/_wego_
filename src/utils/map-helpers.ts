@@ -61,12 +61,15 @@ export async function updateLatsLongs(data: any[]) {
         if (!coords) return;
         place.latitude = Number(coords?.latitude);
         place.longitude = Number(coords?.longitude);
+        place.place_id = String(coords?.place_id)
         res.push(place);
     }
 
     for (const place of data) {
         await updatePlaceDetails(place);
     }
+
+    console.log(res, 'res')
 
     return res;
 }
@@ -111,4 +114,6 @@ export async function createRoutesForData(data: Waypoints[]) {
     // const res = await createRoutes(originData, destinationData, waypointsData)
     return { originData, destinationData, wayPointsData }
 }
+
+
 
