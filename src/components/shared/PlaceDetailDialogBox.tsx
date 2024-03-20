@@ -34,10 +34,6 @@ export default function PlaceDetailDialogBox({
   const [open, setOpen] = React.useState(false);
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
-  React.useEffect(() => {
-    console.log(placeId);
-  }, [placeId]);
-
   if (isDesktop) {
     return (
       <Dialog open={open} onOpenChange={setOpen}>

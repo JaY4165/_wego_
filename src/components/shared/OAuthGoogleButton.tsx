@@ -4,7 +4,7 @@ import React from 'react';
 import { Button } from '../ui/button';
 import { Loader } from 'lucide-react';
 import { createClient } from '@/utils/supabase/supaBaseClient';
-import {  useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { getURL } from '@/utils/getURL';
 
 type OAuthGoogleButtonProps = {
@@ -25,7 +25,7 @@ function OAuthGoogleButton(props: OAuthGoogleButtonProps) {
             access_type: 'offline',
             prompt: 'consent',
           },
-          redirectTo: getURL() + '/auth/google/callback',
+          redirectTo: 'http://localhost:3000' + '/auth/google/callback',
           // process.env.NEXT_PUBLIC_SITE_URL + '/auth/google/callback',
           // 'http://localhost:3000/auth/google/callback',
         },

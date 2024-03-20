@@ -69,7 +69,7 @@ export async function updateLatsLongs(data: any[]) {
         await updatePlaceDetails(place);
     }
 
-    console.log(res, 'res')
+    // console.log(res, 'res')
 
     return res;
 }
@@ -106,7 +106,7 @@ export async function createRoutesForData(data: Waypoints[]) {
         })
     }
 
-    console.log(wayPointsData, 'waypointsData1')
+    // console.log(wayPointsData, 'waypointsData1')
 
     let destinationData = {
         ...data[finalCoordsPlace]

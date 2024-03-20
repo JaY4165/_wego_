@@ -1,9 +1,6 @@
 import React from 'react';
 import PlaceCard from './PlaceCard';
-import {
-  getImagesForPlaceId,
-  getPlaceIdForAddress,
-} from '@/app/actions/trip-plan-actions';
+import { getPlaceIdForAddress } from '@/app/actions/trip-plan-actions';
 
 export default async function PlaceCardsContainer({ places }: { places: any }) {
   const data = await getPlaceIdForAddress(places);

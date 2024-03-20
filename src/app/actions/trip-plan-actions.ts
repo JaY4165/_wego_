@@ -227,8 +227,35 @@ export async function getImagesForPlaceId(placeId: string) {
         return res.result;
     }
     catch (error) {
-        console.error("Error updating place details:", error);
+        console.error("Error getting place details:", error);
     }
+}
+
+export async function getImageByReferenceId(photosData: Photo[] | []) {
+
+    const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string
+    // const url = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${referenceId}&key=${API_KEY}`
+
+    try {
+
+        let photoArray = photosData.map(async (photo) => {
+            const response = await axios.get(`https://maps.googleapis.com/maps/api/place/photo?maxwidth=1000&height=1000&photo_reference=${photo.photo_reference}&key=${API_KEY}`);
+            if (!response.data || response.status !== 200) {
+                throw new Error(`Error fetching data: ${response.status}`);
+            }
+            return response.request.res.responseUrl;
+        });
+
+        return Promise.all(photoArray
+        ).then((data) => {
+            return data;
+        });
+
+    }
+    catch (error) {
+        console.error("Error getting images:", error);
+    }
+
 }
 
 

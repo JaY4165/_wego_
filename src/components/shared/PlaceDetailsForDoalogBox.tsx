@@ -5,6 +5,7 @@ import PlacePhotosCarousel from './PlacePhotosCarousel';
 import { Button } from '../ui/button';
 import Link from 'next/link';
 import { Badge } from '../ui/badge';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface PlaceData {
   formatted_address: string;
@@ -60,26 +61,33 @@ export default function PlaceDetailsForDialogBox({
 }: {
   placeId: string | any;
 }) {
+  const [placeData, setPlaceData] = React.useState<PlaceData | null>(null);
+
   React.useEffect(() => {
     async function fetchPlaceData() {
       const data: PlaceData = (await getImagesForPlaceId(placeId)) as PlaceData;
-      console.log(data, 'data' + placeId);
+      setPlaceData(data);
     }
     fetchPlaceData();
   }, [placeId]);
 
   return (
     <div className="">
-      <PlacePhotosCarousel />
+      <PlacePhotosCarousel photosData={placeData?.photos || []} />
 
       <div className="pt-3 px-1">
-        <h1 className="text-xl">Place Name</h1>
-        <p className="mt-2 text-neutral-400">Address</p>
+        <h1 className="text-xl">{placeData?.name || ''}</h1>
+        <p className="mt-2 text-neutral-400">
+          {placeData?.formatted_address || ''}
+        </p>
         <div className="mt-4">
           <div className="space-y-3 text-neutral-400">
-            <p>Rating : </p>
-            <p className="pb-5">Total User Ratings : </p>
-            <Link href={'#'}>
+            <p>Rating : {placeData?.rating?.toString() || '-'}</p>
+            <p className="pb-5">
+              Total User Ratings :{' '}
+              {placeData?.user_ratings_total?.toString() || '-'}
+            </p>
+            <Link href={placeData?.url || '#'} target="_blank" passHref>
               <Button variant={'default'}>Open In Google Maps </Button>
             </Link>
           </div>
@@ -88,54 +96,30 @@ export default function PlaceDetailsForDialogBox({
 
       <div className="my-8">
         <h1 className="text-xl pt-3 px-1">Reviews</h1>
-        <div className="px-1 mt-10">
-          <div className="flex space-x-3">
-            <div className="w-12 h-12 rounded-full bg-gray-200"></div>
-            <div className="flex justify-between w-full">
-              <div>
-                <h1>Author Name</h1>
-                <p className="text-neutral-400">Rating</p>
+
+        {placeData?.reviews?.map((review) => {
+          return (
+            <div className="px-1 mt-10" key={crypto.randomUUID()}>
+              <div className="flex space-x-3">
+                <div className="w-12 h-12 rounded-full bg-gray-200"></div>
+                <div className="flex justify-between w-full">
+                  <div>
+                    <h1>{review.author_name}</h1>
+                    <p className="text-neutral-400">Rating : {review.rating}</p>
+                  </div>
+                  <div>
+                    <Badge variant={'secondary'}>
+                      {review.relative_time_description}
+                    </Badge>
+                  </div>
+                </div>
               </div>
-              <div>
-                <Badge variant={'secondary'}>4 days ago</Badge>
-              </div>
-            </div>
-          </div>
-          <div className="mt-5 text-neutral-400">
-            <p className="text-justify">
-              It’s a another peaceful beach in south Goa with a way through
-              entering the Lalit resort and spa. It’s not a private beach and
-              it’s allowed for everyone to go through the beach. There are
-              couple of shacks there at the beach but little costly. Beach is
-              beautiful and it’s not much crowded and it will be loved by the
-              people who like peace.
-            </p>
-          </div>
-        </div>
-        <div className="px-1 mt-10">
-          <div className="flex space-x-3">
-            <div className="w-12 h-12 rounded-full bg-gray-200"></div>
-            <div className="flex justify-between w-full">
-              <div>
-                <h1>Author Name</h1>
-                <p className="text-neutral-400">Rating</p>
-              </div>
-              <div>
-                <Badge variant={'secondary'}>4 days ago</Badge>
+              <div className="mt-5 text-neutral-400">
+                <p className="text-justify">{review.text}</p>
               </div>
             </div>
-          </div>
-          <div className="mt-5 text-neutral-400">
-            <p className="text-justify">
-              It’s a another peaceful beach in south Goa with a way through
-              entering the Lalit resort and spa. It’s not a private beach and
-              it’s allowed for everyone to go through the beach. There are
-              couple of shacks there at the beach but little costly. Beach is
-              beautiful and it’s not much crowded and it will be loved by the
-              people who like peace.
-            </p>
-          </div>
-        </div>
+          );
+        })}
       </div>
     </div>
   );

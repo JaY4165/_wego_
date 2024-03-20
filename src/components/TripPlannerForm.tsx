@@ -108,6 +108,7 @@ export default function CardWithForm() {
           toast({
             title: 'Trip planned Successfully',
             // description: 'You have been logged in successfully',
+            variant: 'default',
             duration: 5000,
           });
         }
