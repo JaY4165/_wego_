@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import prisma from "@/lib/db"
 import readUser from '@/utils/supabase/readUser';
 import axios from "axios";
+import generateIternaryPlan from "@/utils/gemini/gemini-ai-model-plan";
 
 
 
@@ -290,4 +291,10 @@ export async function createRoutes(origin: any, destination: any, waypoints: any
     } else {
         return response.data;
     }
+}
+
+
+export async function getItineraryPlan(plan: any) {
+    const data = await generateIternaryPlan(plan);
+    return data
 }

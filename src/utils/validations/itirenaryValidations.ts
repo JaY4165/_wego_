@@ -7,7 +7,7 @@ export const tripPlannerFormSchema = z.object({
             message: 'Trip days must be at least 1',
         })
         .max(3, {
-            message: 'Trip days must be at most 3',
+            message: 'Trip days must be at most 5',
         }),
     placesPerDay: z.coerce
         .number()

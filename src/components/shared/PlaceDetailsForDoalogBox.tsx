@@ -6,6 +6,8 @@ import { Button } from '../ui/button';
 import Link from 'next/link';
 import { Badge } from '../ui/badge';
 import { v4 as uuidv4 } from 'uuid';
+import Image from 'next/image';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 export interface PlaceData {
   formatted_address: string;
@@ -66,10 +68,15 @@ export default function PlaceDetailsForDialogBox({
   React.useEffect(() => {
     async function fetchPlaceData() {
       const data: PlaceData = (await getImagesForPlaceId(placeId)) as PlaceData;
+
       setPlaceData(data);
     }
     fetchPlaceData();
   }, [placeId]);
+
+  React.useEffect(() => {
+    console.log(placeData);
+  }, [placeData]);
 
   return (
     <div className="">
@@ -101,21 +108,36 @@ export default function PlaceDetailsForDialogBox({
           return (
             <div className="px-1 mt-10" key={crypto.randomUUID()}>
               <div className="flex space-x-3">
-                <div className="w-12 h-12 rounded-full bg-gray-200"></div>
+                {/* <div className="w-12 h-12 rounded-full bg-gray-200"></div> */}
+                {/* <Image
+                  src={review?.profile_photo_url}
+                  alt="Author profile picture"
+                  width={10}
+                  height={10}
+                /> */}
+                <Avatar>
+                  <AvatarImage
+                    src={review?.profile_photo_url || ''}
+                    alt="Author profile picture"
+                  />
+                  <AvatarFallback>
+                    {review?.author_name?.slice(0, 2)}
+                  </AvatarFallback>
+                </Avatar>
                 <div className="flex justify-between w-full">
                   <div>
                     <h1>{review.author_name}</h1>
-                    <p className="text-neutral-400">Rating : {review.rating}</p>
+                    <p className="text-neutral-400">Rating : {review?.rating}</p>
                   </div>
                   <div>
                     <Badge variant={'secondary'}>
-                      {review.relative_time_description}
+                      {review?.relative_time_description}
                     </Badge>
                   </div>
                 </div>
               </div>
               <div className="mt-5 text-neutral-400">
-                <p className="text-justify">{review.text}</p>
+                <p className="text-justify">{review?.text}</p>
               </div>
             </div>
           );

@@ -47,7 +47,7 @@ export default function PlacePhotosCarousel({ photosData }: Props) {
                       alt="Carousel Image"
                       width={900}
                       height={900}
-                      className="w-full h-full"
+                      className="w-full h-full aspect-square   object-contain"
                     />{' '}
                   </CardContent>
                 </Card>

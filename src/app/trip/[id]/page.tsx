@@ -2,6 +2,7 @@ import React from 'react';
 import { correctCoords, fetchItinerary } from '@/app/actions/trip-plan-actions';
 import GoogleMapsV2 from '@/components/GoogleMapsV2';
 import PlaceCardsContainer from '@/components/shared/PlaceCardsContainer';
+import ItineraryPlan from '@/components/shared/ItineraryPlan';
 
 export default async function TripPage({ params }: { params: { id: string } }) {
   const itinerary: any = (await fetchItinerary(params.id)) as any;
@@ -26,6 +27,8 @@ export default async function TripPage({ params }: { params: { id: string } }) {
       <GoogleMapsV2 data={itinerary as any} isCorrected={res} id={params.id} />
 
       <PlaceCardsContainer places={places} />
+
+      <ItineraryPlan itinerary={parsedItinerary} />
     </div>
   );
 }
