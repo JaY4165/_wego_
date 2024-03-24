@@ -4,12 +4,17 @@ import React, { useEffect } from 'react';
 import { createRoutesForData, updateLatsLongs } from '@/utils/map-helpers';
 import { fetchItinerary } from '@/app/actions/trip-plan-actions';
 import {
+  AdvancedMarker,
   APIProvider,
+  InfoWindow,
   Map,
   Marker,
+  useAdvancedMarkerRef,
   useMap,
   useMapsLibrary,
+  useMarkerRef,
 } from '@vis.gl/react-google-maps';
+import useNearbyPlacesStore from '@/stores/nearby-places-store';
 
 export default function GoogleMapsV2(props: {
   data: any;
@@ -33,14 +38,6 @@ export default function GoogleMapsV2(props: {
   const mapRef = React.useRef(null);
   const [googleMap, setGoogleMap] = React.useState<any>(null);
 
-  // useEffect(() => {
-  //   navigator.geolocation.getCurrentPosition((position) => {
-  //     setUserLocation({
-  //       lat: position.coords.latitude,
-  //       lng: position.coords.longitude,
-  //     });
-  //   });
-  // }, []);
 
   useEffect(() => {
     async function runWhenUpdatedIsTrue() {
@@ -114,15 +111,6 @@ export default function GoogleMapsV2(props: {
     }
   }, [originalData]);
 
-  // useEffect(() => {
-  //   console.log('directions', directions);
-  // }, [directions]);
-
-  //   const onLoad = React.useCallback((map: any) => {
-  //     mapRef.current = map;
-  //     setGoogleMap(map);
-  //   }, []);
-
   return (
     <div className="mt-14 mb-14 h-[90vh] w-full">
       <APIProvider
@@ -130,10 +118,25 @@ export default function GoogleMapsV2(props: {
       >
         <Map defaultCenter={center} defaultZoom={15}>
           {/* <Marker position={center} /> */}
+          <Markers />
           <Directions data={directions} />
         </Map>
       </APIProvider>
     </div>
+  );
+}
+
+function Markers() {
+  const { nearbyPlaces } = useNearbyPlacesStore();
+
+  return (
+    <>
+      {nearbyPlaces.map(
+        (place: [string, { lat: number; lng: number }], index) => (
+          <Marker key={place[0]} position={place[1]}></Marker>
+        ),
+      )}
+    </>
   );
 }
 

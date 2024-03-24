@@ -310,3 +310,50 @@ export async function getItineraryPlan(plan: any) {
     const data = await generateIternaryPlan(plan);
     return data
 }
+
+
+export async function getNearbyHospitals(lat: any, lon: any) {
+    const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string
+    const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lon}&radius=2000&type=hospital&key=${API_KEY}`
+    try {
+        const response = await axios.get(url);
+        if (!response.data || response.status !== 200) {
+            throw new Error(`Error fetching data: ${response.status}`);
+        }
+        return response.data.results;
+    }
+    catch (error) {
+        console.error("Error getting nearby hospitals:", error);
+    }
+}
+
+export async function getNearbyRestaurants(lat: any, lon: any) {
+    const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string
+    const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lon}&radius=2000&type=restaurant&key=${API_KEY}`
+    try {
+        const response = await axios.get(url);
+        if (!response.data || response.status !== 200) {
+            throw new Error(`Error fetching data: ${response.status}`);
+        }
+        return response.data.results;
+    }
+    catch (error) {
+        console.error("Error getting nearby restaurants:", error);
+    }
+}
+
+
+export async function getNearbyHotels(lat: any, lon: any) {
+    const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string
+    const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lon}&radius=2000&type=hotel&key=${API_KEY}`
+    try {
+        const response = await axios.get(url);
+        if (!response.data || response.status !== 200) {
+            throw new Error(`Error fetching data: ${response.status}`);
+        }
+        return response.data.results;
+    }
+    catch (error) {
+        console.error("Error getting nearby hotels:", error);
+    }
+}

@@ -3,11 +3,13 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import PlaceDetailDialogBox from './PlaceDetailDialogBox';
+import CardBadges from './CardBadges';
 
 export default function PlaceCard({ place }: { place: any }) {
   return (
@@ -35,6 +37,9 @@ export default function PlaceCard({ place }: { place: any }) {
           </div>
         </div>
       </CardContent>
+      <CardFooter className="bg-primary">
+        <CardBadges placesData={place} />
+      </CardFooter>
     </Card>
   );
 }

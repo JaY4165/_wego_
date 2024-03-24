@@ -26,6 +26,10 @@ export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname === '/trip-planner' && loggedIn === false) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
+
+  if (request.nextUrl.pathname === '/state-trip-planner' && loggedIn === false) {
+    return NextResponse.redirect(new URL('/login', request.url));
+  }
 }
 
 
