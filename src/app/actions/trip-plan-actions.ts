@@ -1,6 +1,6 @@
 "use server";
 
-import { tripPlannerFormSchema } from "@/utils/validations/itirenaryValidations";
+import { stateTripPlannerFormSchema, tripPlannerFormSchema } from "@/utils/validations/itirenaryValidations";
 import { z } from "zod";
 import generateIternary from "@/utils/gemini/gemini-ai-model";
 import { purifyJson } from "@/utils/helpers";
@@ -10,6 +10,7 @@ import prisma from "@/lib/db"
 import readUser from '@/utils/supabase/readUser';
 import axios from "axios";
 import generateIternaryPlan from "@/utils/gemini/gemini-ai-model-plan";
+import generateIternaryForState from "@/utils/gemini/gemini-ai-model-state-plan";
 
 
 
@@ -18,6 +19,17 @@ export async function planTrip(data: z.infer<typeof tripPlannerFormSchema>) {
         return;
     }
     const response = await generateIternary(data);
+    const purifiedResponse: Itinerary = await purifyJson(response) as Itinerary;
+    const uid = uuidv4();
+    purifiedResponse.id = uid;
+    return purifiedResponse;
+}
+
+export async function statePlanTrip(data: z.infer<typeof stateTripPlannerFormSchema>) {
+    if (data.country === '' || data.state === '') {
+        return;
+    }
+    const response = await generateIternaryForState(data);
     const purifiedResponse: Itinerary = await purifyJson(response) as Itinerary;
     const uid = uuidv4();
     purifiedResponse.id = uid;

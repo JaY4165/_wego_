@@ -1,6 +1,6 @@
 'use client';
 
-export default function TripPlannerError() {
+export default function StateTripPlannerError() {
   return (
     <div className="w-full h-[80vh] flex items-center justify-center">
       <h2 className="text-3xl">
