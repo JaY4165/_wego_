@@ -31,7 +31,9 @@ async function Navbar() {
     <header className="container z-50">
       <nav className="flex w-full justify-between items-center pt-4 z-50">
         <div>
-          <h1 className="text-xl">WeGo</h1>
+          <Link href={'/'}>
+            <h1 className="text-xl">WeGo</h1>
+          </Link>
         </div>
         <div className="flex gap-x-5">
           <ModeToggle />
