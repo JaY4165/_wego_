@@ -71,7 +71,8 @@ export default function SignUpForm() {
         } else {
           toast({
             title: 'Account Created',
-            description: 'Your account has been created successfully.',
+            description:
+              'Your account has been created successfully. Check your email to verify your account.',
             duration: 5000,
           });
           router.replace('/trip-planner');
