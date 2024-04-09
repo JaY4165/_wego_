@@ -14,7 +14,7 @@ export default async function TripPlanner() {
       <section className="pb-10 text-center">
         <Link
           href={'/trip-planner'}
-          className="text-white text-xl underline underline-offset-8"
+          className="dark:text-white text-black text-xl underline underline-offset-8"
         >
           Plan Trip For City
         </Link>
