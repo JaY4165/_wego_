@@ -25,7 +25,7 @@ function OAuthGoogleButton(props: OAuthGoogleButtonProps) {
             access_type: 'offline',
             prompt: 'consent',
           },
-          redirectTo: 'http://localhost:3000' + '/auth/google/callback',
+          redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/google/callback`,
           // process.env.NEXT_PUBLIC_SITE_URL + '/auth/google/callback',
           // 'http://localhost:3000/auth/google/callback',
         },
